@@ -22,7 +22,6 @@ public class CMainActivity extends AppCompatActivity {
 
         viewPager.setAdapter(new CPagerAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
-
     }
 
     @Override
