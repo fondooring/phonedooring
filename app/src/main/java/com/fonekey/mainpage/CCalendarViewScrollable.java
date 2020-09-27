@@ -7,28 +7,27 @@ import android.view.ViewParent;
 import android.widget.CalendarView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class CCalendarViewScrollable extends CalendarView {
-
     public CCalendarViewScrollable(@NonNull Context context) {
         super(context);
     }
 
-    /*public CCalendarViewScrollable(Context context) {
-        super(context);
-    }
-
-    public CCalendarViewScrollable(Context context, AttributeSet attrs) {
+    public CCalendarViewScrollable(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CCalendarViewScrollable(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    public CCalendarViewScrollable(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    /*public CCalendarViewScrollable(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
     }*/
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev)
-    {
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN)
         {
             ViewParent p = getParent();
@@ -38,5 +37,4 @@ public class CCalendarViewScrollable extends CalendarView {
 
         return false;
     }
-
 }
