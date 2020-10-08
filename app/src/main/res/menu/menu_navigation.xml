@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_search"
+        android:title="@string/search"
+        android:orderInCategory="1"
+        android:icon="@drawable/abc_vector_test"/>
+
+    <item
+        android:id="@+id/menu_rent"
+        android:title="@string/rent"
+        android:orderInCategory="1"
+        android:icon="@drawable/common_google_signin_btn_icon_light_focused"/>
+
+    <item
+        android:id="@+id/menu_surrender"
+        android:title="@string/surrender"
+        android:orderInCategory="1"
+        android:icon="@drawable/common_google_signin_btn_icon_disabled"/>
+
+</menu>
