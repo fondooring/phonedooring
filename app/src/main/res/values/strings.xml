@@ -14,4 +14,9 @@
     <string name="search">Поиск</string>
     <string name="rent">Аренда</string>
     <string name="surrender">Сдача</string>
+    <string name="welcome_name">Здравствуйте,\nпользователь</string>
+    <string name="town">Выберите город</string>
+    <string name="date">Выберите дату</string>
+    <string name="number_person">Выберите количество персон</string>
+    <string name="find">Найти</string>
 </resources>
