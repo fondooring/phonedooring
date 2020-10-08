@@ -57,6 +57,13 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         }
     }
 
+    public void onClear()
+    {
+        int listSize = m_lstFerm.size();
+        for(int i = 0; i < listSize; i++)
+            onItemDel(0);
+    }
+
     public void onItemAdd(String street)
     {
         CFerm ferm = new CFerm();
