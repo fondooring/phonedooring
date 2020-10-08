@@ -57,19 +57,9 @@ public class CRentFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rent, container, false);
 
-        Button m_btnSearch = (Button) view.findViewById(R.id.btnSearch);
         Button btnSend = (Button) view.findViewById(R.id.btnSend);
         m_txtMessage = (TextView) view.findViewById(R.id.txtTown);
         m_txtData = (TextView) view.findViewById(R.id.txtDate);
-
-        m_btnSearch.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(getActivity(), CSearchActivity.class);
-                startActivity(intent);
-            }
-        });
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override

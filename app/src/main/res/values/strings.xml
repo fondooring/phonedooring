@@ -19,4 +19,5 @@
     <string name="date">Выберите дату</string>
     <string name="number_person">Выберите количество персон</string>
     <string name="find">Найти</string>
+    <string name="not_connection">Нет связи с сервером</string>
 </resources>
