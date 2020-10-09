@@ -20,4 +20,8 @@
     <string name="number_person">Выберите количество персон</string>
     <string name="find">Найти</string>
     <string name="not_connection">Нет связи с сервером</string>
+    <string name="location">Местоположение</string>
+    <string name="description">Описание</string>
+    <string name="photo">Фото</string>
+    <string name="save">Сохранить</string>
 </resources>

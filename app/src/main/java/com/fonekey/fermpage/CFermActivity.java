@@ -1,8 +1,10 @@
 package com.fonekey.fermpage;
 import com.fonekey.R;
+import com.fonekey.mainpage.CFerm;
 import com.fonekey.searchpage.CSearchActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,23 +16,27 @@ import android.widget.TextView;
 
 public class CFermActivity extends AppCompatActivity {
 
-    public CFermActivity() {};
-
+    Button btnSave;
     TextView m_street;
+    TextView m_definitionFerm;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_add_ferm);
-        Button btnOk = (Button) findViewById(R.id.btnSaveFerm);
+
+        btnSave = (Button) findViewById(R.id.btnSaveFerm);
         m_street = (TextView) findViewById(R.id.txtStreetFerm);
-        btnOk.setOnClickListener(new OnClickListener() {
+        m_definitionFerm = (TextView) findViewById(R.id.txtDefinitionFerm);
+
+        btnSave.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v)
             {
                 Intent intent = new Intent();
-                intent.putExtra("street", m_street.getText());
-                setResult(RESULT_OK, intent);
+                intent.putExtra("street", m_street.getText().toString());
+                intent.putExtra("definition", m_definitionFerm.getText().toString());
+                setResult(1889, intent);
                 finish();
             }
         });

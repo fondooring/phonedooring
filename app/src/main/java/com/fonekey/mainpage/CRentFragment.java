@@ -42,6 +42,18 @@ public class CRentFragment extends Fragment {
     RecyclerView m_recyclerViewRent;
     TextView m_textPlugRent;
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(data == null)
+            return;
+
+        if( resultCode == 1889 ) {
+            ((CRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd(data.getStringExtra("definition"));
+            m_textPlugRent.setText("");
+            m_recyclerViewRent.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -73,31 +85,7 @@ public class CRentFragment extends Fragment {
             {
                 Intent intent = new Intent(CRentFragment.this.getActivity(), CFermActivity.class);
                 startActivityForResult(intent, 1);
-                ((CSliderFermRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd("Новый фрейм");
             }
-
-            /*@Override
-            protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-                DialogFragment fr = new DialogFragment();
-                fr.showNow(getFragmentManager(), "onActivityResult");
-
-                if (data == null) {
-                    return;
-                }
-
-                ((CRecyclerAdapter)m_recyclerViewFerm.getAdapter()).onItemAdd("ffff234");
-
-                //String name = data.getStringExtra("name");
-                //tvName.setText("Your name is " + name);
-            }*/
-
-
-            /*@Override
-            protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-                super.onActivityResult(requestCode, resultCode, data);
-            }*/
-
         });
 
         return view;
