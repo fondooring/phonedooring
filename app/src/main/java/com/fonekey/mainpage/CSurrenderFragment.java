@@ -38,51 +38,9 @@ public class CSurrenderFragment extends Fragment {
         m_textPlugSurrender = (TextView) view.findViewById(R.id.txtPlugSurrender);
         m_textPlugSurrender.setText("У вас нет арендованных квартир");
 
-        /*FloatingActionButton btnAddFerm = (FloatingActionButton) view.findViewById(R.id.btnAddFerm);
-        btnAddFerm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                // Удаление
-                //((CRecyclerAdapter)m_recyclerViewFerm.getAdapter()).onItemDel(0);
-
-                // Добавление
-                // ((CRecyclerAdapter)m_recyclerViewFerm.getAdapter()).onItemAdd();
-
-                Intent intent = new Intent(CSurrenderFragment.this.getActivity(), CFermActivity.class);
-                startActivityForResult(intent, 1);
-                ((CSliderFermRecyclerAdapter)m_recyclerViewSurrender.getAdapter()).onItemAdd("Новый фрейм");
-            }*/
-
-            /*@Override
-            protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-                DialogFragment fr = new DialogFragment();
-                fr.showNow(getFragmentManager(), "onActivityResult");
-
-                if (data == null) {
-                    return;
-                }
-
-                ((CRecyclerAdapter)m_recyclerViewFerm.getAdapter()).onItemAdd("ffff234");
-
-                //String name = data.getStringExtra("name");
-                //tvName.setText("Your name is " + name);
-            }*/
-
-
-            /*@Override
-            protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-                super.onActivityResult(requestCode, resultCode, data);
-            }*/
-
-        //});
-
         m_recyclerViewSurrender.setVisibility(View.INVISIBLE);
-
         m_recyclerViewSurrender.setHasFixedSize(true);
         m_recyclerViewSurrender.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         m_recyclerViewSurrender.setAdapter(new CSliderFermRecyclerAdapter(new ArrayList<CFermSlider>()));
 
         return view;

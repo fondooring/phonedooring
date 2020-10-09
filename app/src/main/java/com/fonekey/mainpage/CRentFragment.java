@@ -1,6 +1,8 @@
 package com.fonekey.mainpage;
 import com.fonekey.R;
+import com.fonekey.fermpage.CFermActivity;
 import com.fonekey.searchpage.CSearchActivity;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -63,6 +65,40 @@ public class CRentFragment extends Fragment {
 
         for(int i = 0; i < 10; i++)
             ((CRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd(Integer.toString(10000 * i));
+
+        FloatingActionButton btnAddFerm = (FloatingActionButton) view.findViewById(R.id.btnAddFerm);
+        btnAddFerm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(CRentFragment.this.getActivity(), CFermActivity.class);
+                startActivityForResult(intent, 1);
+                ((CSliderFermRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd("Новый фрейм");
+            }
+
+            /*@Override
+            protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+                DialogFragment fr = new DialogFragment();
+                fr.showNow(getFragmentManager(), "onActivityResult");
+
+                if (data == null) {
+                    return;
+                }
+
+                ((CRecyclerAdapter)m_recyclerViewFerm.getAdapter()).onItemAdd("ffff234");
+
+                //String name = data.getStringExtra("name");
+                //tvName.setText("Your name is " + name);
+            }*/
+
+
+            /*@Override
+            protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+                super.onActivityResult(requestCode, resultCode, data);
+            }*/
+
+        });
 
         return view;
     }
