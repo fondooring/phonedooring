@@ -13,6 +13,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,87 +28,55 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class CRentFragment extends Fragment {
 
-    TextView m_txtMessage;
-    TextView m_txtData;
-    private Socket m_socket;
-    private static final int SERVERPORT = 3500;
-    private static final String SERVER_IP = "45.134.60.232";
+    /*CRentFragment(Socket socket) {
+        super(socket);
+    }*/
 
-    public CRentFragment() {
-    };
-
-    class ClientThread implements Runnable {
-
-        @Override
-        public void run() {
-            try {
-                InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
-                m_socket = new Socket(serverAddr, SERVERPORT);
-
-            } catch (UnknownHostException e1) {
-                e1.printStackTrace();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-    }
+    SwipeRefreshLayout m_swipeRefreshLayout;
+    RecyclerView m_recyclerViewRent;
+    TextView m_textPlugRent;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rent, container, false);
 
-        Button btnSend = (Button) view.findViewById(R.id.btnSend);
-        m_txtMessage = (TextView) view.findViewById(R.id.txtTown);
-        m_txtData = (TextView) view.findViewById(R.id.txtDate);
+        // new Thread(new ClientThread()).start();
 
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(getActivity(), "onClick:", Toast.LENGTH_SHORT).show();
-                SendData(m_txtMessage.getText().toString());
-            }
-        });
+        m_swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshRent);
+        m_recyclerViewRent = (RecyclerView) view.findViewById(R.id.recyclerViewRent);
+        m_textPlugRent = (TextView) view.findViewById(R.id.txtPlugRent);
 
-        new Thread(new ClientThread()).start();
+        // получения списка квартир
+
+        if(true)
+            m_textPlugRent.setText(R.string.not_connection);
+
+        m_recyclerViewRent.setVisibility(View.INVISIBLE);
+        m_recyclerViewRent.setHasFixedSize(true);
+        m_recyclerViewRent.setLayoutManager(new LinearLayoutManager(getActivity()));
+        m_recyclerViewRent.setAdapter(new CRecyclerAdapter(new ArrayList<CFerm>()));
+
+        for(int i = 0; i < 10; i++)
+            ((CRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd(Integer.toString(10000 * i));
 
         return view;
     }
 
-    public void SendData(String message) {
-        try {
-            PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream())),true);
-            out.println(message);
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
-            /*String response = new String();
-            BufferedReader in = new BufferedReader(new InputStreamReader(m_socket.getInputStream(), "UTF-8"));
-
-            Toast.makeText(this.getActivity(), "start", Toast.LENGTH_SHORT).show();
-
-            while (in.ready()) {
-                response = in.readLine();
-                Toast.makeText(this.getActivity(), response, Toast.LENGTH_SHORT).show();
+        m_swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                m_textPlugRent.setText("");
+                m_recyclerViewRent.setVisibility(View.VISIBLE);
+                m_swipeRefreshLayout.setRefreshing(false);
             }
-
-            //while(in.ready() && (response = in.readLine()) != null) {
-              //Toast.makeText(this.getActivity(), response, Toast.LENGTH_SHORT).show();
-            //}
-
-            //while ((response = in.readLine()) != null) {
-              //  Toast.makeText(this.getActivity(), response, Toast.LENGTH_SHORT).show();
-            //}
-
-            Toast.makeText(this.getActivity(), "stop", Toast.LENGTH_SHORT).show();*/
-
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
     }
 }

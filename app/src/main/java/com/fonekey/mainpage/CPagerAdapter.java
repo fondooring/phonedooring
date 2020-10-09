@@ -8,8 +8,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import java.net.Socket;
+
 public class CPagerAdapter extends FragmentPagerAdapter {
 
+    Socket m_socket;
     CRentFragment m_rent;
     CSurrenderFragment m_surrender;
 

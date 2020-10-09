@@ -6,40 +6,40 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fonekey.R;
 
 import java.util.List;
 
-public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFermViewHolder>
+public class CSliderFermRecyclerAdapter extends RecyclerView.Adapter<CSliderFermRecyclerAdapter.CFermViewHolder>
 {
-    private List<CFerm> m_lstFerm;
+    private List<CFermSlider> m_lstFerm;
     CFermViewHolder m_fermViewHolder;
-    Button m_btnPay;
+    SwitchCompat m_swchFermEnable;
 
-    public CRecyclerAdapter(List<CFerm> lstFerm) {
+    public CSliderFermRecyclerAdapter(List<CFermSlider> lstFerm) {
         m_lstFerm = lstFerm;
     }
 
     @Override
     public CFermViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
     {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ferm, viewGroup, false);
-        m_btnPay = (Button) view.findViewById(R.id.btnPay);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ferm_slider, viewGroup, false);
+        m_swchFermEnable = (SwitchCompat) view.findViewById(R.id.switchEnableFerm);
 
         return m_fermViewHolder = new CFermViewHolder(view);
     }
 
     public static class CFermViewHolder extends RecyclerView.ViewHolder
     {
-        private TextView m_cost;
+        SwitchCompat m_swchFermEnable;
 
-        public CFermViewHolder(View itemView)
-        {
+        public CFermViewHolder(View itemView) {
             super (itemView);
 
-            m_cost = (TextView) itemView.findViewById(R.id.txtCost);
+            m_swchFermEnable = (SwitchCompat) itemView.findViewById(R.id.switchEnableFerm);
         }
     }
 
@@ -61,18 +61,20 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
 
     public void onItemAdd(String street)
     {
-        CFerm ferm = new CFerm();
-        ferm.m_cost = street;
-        m_lstFerm.add(0, ferm);
+        CFermSlider fermSlider = new CFermSlider();
+        fermSlider.m_street = street;
+        fermSlider.m_enable = false;
+        m_lstFerm.add(0, fermSlider);
         notifyItemInserted(0);
         // notifyItemRangeInserted(m_lstFerm.size() + 1, m_lstFerm.size());
     }
 
     @Override
     public void onBindViewHolder(CFermViewHolder viewHolder, final int position) {
-        viewHolder.m_cost.setText(m_lstFerm.get(position).m_cost);
+        viewHolder.m_swchFermEnable.setText(m_lstFerm.get(position).m_street);
+        viewHolder.m_swchFermEnable.setChecked(m_lstFerm.get(position).m_enable);
 
-        m_btnPay.setOnClickListener(new View.OnClickListener() {
+        m_swchFermEnable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int t = position;
