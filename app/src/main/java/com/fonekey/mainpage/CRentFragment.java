@@ -73,7 +73,7 @@ public class CRentFragment extends Fragment {
         m_recyclerViewRent.setVisibility(View.INVISIBLE);
         m_recyclerViewRent.setHasFixedSize(true);
         m_recyclerViewRent.setLayoutManager(new LinearLayoutManager(getActivity()));
-        m_recyclerViewRent.setAdapter(new CRecyclerAdapter(new ArrayList<CFerm>()));
+        m_recyclerViewRent.setAdapter(new CRecyclerAdapter(new ArrayList<CFerm>(), getActivity()));
 
         for(int i = 0; i < 10; i++)
             ((CRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd(Integer.toString(10000 * i));

@@ -1,6 +1,8 @@
 package com.fonekey.mainpage;
 
-public class CFerm {
+import androidx.fragment.app.Fragment;
+
+public class CFerm extends Fragment {
     public boolean m_like;
     public String m_description;
     public String m_appraisal;

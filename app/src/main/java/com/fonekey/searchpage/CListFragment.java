@@ -45,7 +45,7 @@ public class CListFragment extends Fragment {
         m_recyclerViewList.setVisibility(View.INVISIBLE);
         m_recyclerViewList.setHasFixedSize(true);
         m_recyclerViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        m_recyclerViewList.setAdapter(new CRecyclerAdapter(new ArrayList<CFerm>()));
+        m_recyclerViewList.setAdapter(new CRecyclerAdapter(new ArrayList<CFerm>(), getActivity()));
 
         for(int i = 0; i < 10; i++)
             ((CRecyclerAdapter)m_recyclerViewList.getAdapter()).onItemAdd(Integer.toString(10000 * i));

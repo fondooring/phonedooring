@@ -25,4 +25,10 @@
         android:label="Surrender"
         tools:layout="@layout/fragment_surrender"/>
 
+    <activity
+        android:id="@+id/menu_regisration"
+        android:name="com.fonekey.mainpage.CRegistrationActivity"
+        android:label="Test"
+        tools:layout="@layout/activity_login"/>
+
 </navigation>

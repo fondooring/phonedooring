@@ -24,4 +24,5 @@
     <string name="description">Описание</string>
     <string name="photo">Фото</string>
     <string name="save">Сохранить</string>
+    <string name="registration">Регистрация</string>
 </resources>
