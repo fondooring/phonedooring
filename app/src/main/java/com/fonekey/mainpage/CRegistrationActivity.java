@@ -2,7 +2,6 @@ package com.fonekey.mainpage;
 import com.fonekey.R;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,18 +27,8 @@ public class CRegistrationActivity extends AppCompatActivity {
 
         boolean isUserRegistered = true;
 
-        //String path_dir = Environment.getExternalStorageDirectory() + "/Android/data/" + requireContext().getPackageName();
-        String path_dir = Environment.getExternalStorageDirectory() + "/Android/data/" + getPackageName();
-
-        //SharedPreferences prefs = requireContext().getSharedPreferences("fonkeySettings", MODE_PRIVATE);
-        //boolean isUserRegistered = prefs.getBoolean("userRegistered", false); //False is a default value
-
-        m_externalAppDir = new File(path_dir);
+        m_externalAppDir = new File(getExternalFilesDir(null), "registration");
         if (!m_externalAppDir.exists())
-            m_externalAppDir.mkdir();
-
-        File externalAppFile = new File(path_dir + "/registration");
-        if (!externalAppFile.exists())
             isUserRegistered = false;
 
         if (!isUserRegistered)
@@ -56,25 +45,20 @@ public class CRegistrationActivity extends AppCompatActivity {
             m_btnOkReg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    File file = new File(m_externalAppDir , "registration");
                     try {
-                        file.createNewFile();
+                        boolean result = m_externalAppDir.createNewFile();
+                        if(result)
+                            m_txtRegistrationSuccess.setText("Регистрация пройдена");
+                        else
+                            m_txtRegistrationSuccess.setText("Регистрация не пройдена");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
                     String z = m_txtPassword.getText().toString();
                     String y = m_txtUsername.getText().toString();
-
-                    m_txtRegistrationSuccess.setText("Регистрация пройдена");
-
-                    // SharedPreferences.Editor editor = getContext().getSharedPreferences("fonkeySettings", MODE_PRIVATE).edit();
-                    // editor.putBoolean("userRegistered", true);
-                    // editor.apply();
                 }
             });
         }
-
-
     }
 }
