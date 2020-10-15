@@ -10,25 +10,25 @@
     <fragment
         android:id="@+id/menu_search"
         android:name="com.fonekey.mainpage.CSearchFragment"
-        android:label="Search"
+        android:label="Поиск квартиры"
         tools:layout="@layout/fragment_search"/>
 
     <fragment
         android:id="@+id/menu_rent"
         android:name="com.fonekey.mainpage.CRentFragment"
-        android:label="Rent"
+        android:label="Сдаваемые квартиры"
         tools:layout="@layout/fragment_rent"/>
 
     <fragment
         android:id="@+id/menu_surrender"
         android:name="com.fonekey.mainpage.CSurrenderFragment"
-        android:label="Surrender"
+        android:label="Арендуемые квартиры"
         tools:layout="@layout/fragment_surrender"/>
 
     <activity
         android:id="@+id/menu_regisration"
         android:name="com.fonekey.mainpage.CRegistrationActivity"
-        android:label="Test"
+        android:label=""
         tools:layout="@layout/activity_login"/>
 
 </navigation>
