@@ -26,21 +26,24 @@
                 android:text="@string/town"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:onClick="onClick"/>
 
             <Button
                 android:id="@+id/btnDate"
                 android:text="@string/date"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:onClick="onClick"/>
 
             <Button
                 android:id="@+id/btnNumberPerson"
                 android:text="@string/number_person"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:onClick="onClick"/>
 
             <Button
                 android:id="@+id/btnSearch"
@@ -48,6 +51,12 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"/>
+
+            <FrameLayout
+                android:id="@+id/frgmCont"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </FrameLayout>
 
         </LinearLayout>
 
