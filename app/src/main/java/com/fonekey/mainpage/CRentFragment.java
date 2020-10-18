@@ -59,8 +59,6 @@ public class CRentFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rent, container, false);
 
-        // new Thread(new ClientThread()).start();
-
         m_swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshRent);
         m_recyclerViewRent = (RecyclerView) view.findViewById(R.id.recyclerViewRent);
         m_textPlugRent = (TextView) view.findViewById(R.id.txtPlugRent);

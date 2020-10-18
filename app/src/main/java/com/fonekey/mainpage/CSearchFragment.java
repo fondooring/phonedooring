@@ -15,7 +15,20 @@ import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 public class CSearchFragment  extends Fragment {
+
+    //private Socket m_socket;
+
+    /*CSearchFragment(Socket socket) {
+        m_socket = socket;
+    }*/
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
@@ -24,8 +37,23 @@ public class CSearchFragment  extends Fragment {
         m_btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CSearchActivity.class);
-                startActivity(intent);
+
+                CClient.SendData("sad");
+
+                /*try {
+                    PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(CMainActivity.m_socket.getOutputStream())),true);
+                    out.println("message");
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }*/
+
+
+                //Intent intent = new Intent(getActivity(), CSearchActivity.class);
+                //startActivity(intent);
             }
         });
 
