@@ -1,12 +1,19 @@
 package com.fonekey.mainpage;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 public class CClient {
 
@@ -55,4 +62,25 @@ public class CClient {
         return result;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    static String ReadData() {
+        String line = "";
+
+        if(m_socket != null) {
+
+            try {
+                BufferedReader in = new BufferedReader(new InputStreamReader(m_socket.getInputStream(), StandardCharsets.UTF_8));
+                while ((line = in.readLine()) != null) {
+                    //return line;
+                }
+
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return line;
+    }
 }
