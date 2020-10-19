@@ -4,15 +4,16 @@ import com.fonekey.R;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -31,7 +32,7 @@ public class CRegistrationActivity extends AppCompatActivity {
 
         boolean isUserRegistered = true;
 
-        m_externalAppDir = new File(getExternalFilesDir(null), "registration");
+        m_externalAppDir = new File(getExternalFilesDir(null), "registration.txt");
         if (!m_externalAppDir.exists())
             isUserRegistered = false;
 
@@ -51,33 +52,67 @@ public class CRegistrationActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
 
-                    ArrayList<String> message = new ArrayList<String>();
+                    ArrayList<String> message = new ArrayList<>();
 
                     message.add("A");
                     message.add(m_txtUsername.getText().toString());
                     message.add(m_txtPassword.getText().toString());
 
-                    int result = CClient.SendData(message.toString().replace(',', '|'));
+                    String str = message.toString();
+                    int result = CClient.SendData(str.substring(1, str.length() - 1).replace(", ", "|"));
                     if (result == 0) {
+
                         Toast.makeText(getApplicationContext(),"Сообщение отправлено", Toast.LENGTH_SHORT).show();
-                        String answer = CClient.ReadData();
-                        if(!answer.isEmpty()) {
+
+                        Thread thrRead = new Thread(new CClient.ReadThread());
+                        thrRead.start();
+                        try {
+                            thrRead.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        str = CClient.GetBuffer();
+                        if(!str.equals("")) {
                             Toast.makeText(getApplicationContext(),"Сообщение получено", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(getApplicationContext(),answer, Toast.LENGTH_SHORT).show();
-                            /*try {
+                            Toast.makeText(getApplicationContext(), str, Toast.LENGTH_SHORT).show();
+
+                            char[] answer = str.toCharArray();
+                            int sizeAnswer = str.length();
+                            if(answer[0] != 'A')
+                               return;
+                            if(answer[1] != '|')
+                                return;
+                            if(answer[2] != '1')
+                                return;
+                            if(answer[3] != '|')
+                                return;
+
+                            str = "";
+                            for(int i = 4; i < sizeAnswer; i++)
+                                str += answer[i];
+
+                            try {
                                 boolean res = m_externalAppDir.createNewFile();
-                                if(res)
-                                    m_txtRegistrationSuccess.setText("Регистрация пройдена");
-                                else
+                                if(res) {
+                                    try {
+                                        FileWriter myWriter = new FileWriter(m_externalAppDir);
+                                        myWriter.write(str);
+                                        myWriter.close();
+                                        m_txtRegistrationSuccess.setText("Регистрация пройдена");
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                } else
                                     m_txtRegistrationSuccess.setText("Регистрация не пройдена");
                             } catch (IOException e) {
                                 e.printStackTrace();
-                            }*/
+                            }
                         } else
                             Toast.makeText(getApplicationContext(),"Сообщение не получено", Toast.LENGTH_SHORT).show();
-                    } else {
+                    } else
                         Toast.makeText(getApplicationContext(),"Нет связи", Toast.LENGTH_SHORT).show();
-                    }
                 }
             });
         }
