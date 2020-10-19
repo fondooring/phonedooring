@@ -5,12 +5,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class CRegistrationActivity extends AppCompatActivity {
 
@@ -45,7 +47,21 @@ public class CRegistrationActivity extends AppCompatActivity {
             m_btnOkReg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    try {
+
+                    ArrayList<String> message = new ArrayList<String>();
+
+                    message.add("A");
+                    message.add(m_txtUsername.getText().toString());
+                    message.add(m_txtPassword.getText().toString());
+
+                    int result = CClient.SendData(message.toString().replace(',', '|'));
+                    if (result == 0) {
+                        Toast.makeText(getApplicationContext(),"Сообщение отправлено", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(),"Нет связи", Toast.LENGTH_SHORT).show();
+                    }
+
+                    /*try {
                         boolean result = m_externalAppDir.createNewFile();
                         if(result)
                             m_txtRegistrationSuccess.setText("Регистрация пройдена");
@@ -53,10 +69,7 @@ public class CRegistrationActivity extends AppCompatActivity {
                             m_txtRegistrationSuccess.setText("Регистрация не пройдена");
                     } catch (IOException e) {
                         e.printStackTrace();
-                    }
-
-                    String z = m_txtPassword.getText().toString();
-                    String y = m_txtUsername.getText().toString();
+                    }*/
                 }
             });
         }

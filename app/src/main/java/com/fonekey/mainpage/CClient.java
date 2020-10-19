@@ -12,7 +12,7 @@ public class CClient {
 
     private static Socket m_socket;
     private static final int SERVERPORT = 3500;
-    private static final String SERVER_IP = "192.168.1.4";
+    private static final String SERVER_IP = "192.168.1.5";
 
     CClient() {
         new Thread(new ClientThread()).start();
@@ -34,17 +34,25 @@ public class CClient {
         }
     }
 
-    static void SendData(String message) {
-        try {
-            PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream())),true);
-            out.println(message);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+    static int SendData(String message) {
+
+        int result = 1;
+
+        if(m_socket != null) {
+            result = 0;
+            try {
+                PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream())), true);
+                out.println(message);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
+        return result;
     }
 
 }
