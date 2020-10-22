@@ -1,21 +1,23 @@
 package com.fonekey.searchpage;
 import com.fonekey.R;
-import com.fonekey.mainpage.CFerm;
+
 import com.fonekey.mainpage.CClient;
 import com.fonekey.mainpage.CRecyclerAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.view.LayoutInflater;
 
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -31,13 +33,13 @@ public class CListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
 
-        m_swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshList);
-        m_recyclerViewList = (RecyclerView) view.findViewById(R.id.recycle_view);
-        m_textPlugList = (TextView) view.findViewById(R.id.txtPlugList);
+        m_swipeRefreshLayout = view.findViewById(R.id.swipeRefreshList);
+        m_recyclerViewList = view.findViewById(R.id.recycle_view);
+        m_textPlugList = view.findViewById(R.id.txtPlugList);
 
         m_recyclerViewList.setHasFixedSize(true);
         m_recyclerViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        m_recyclerViewList.setAdapter(new CRecyclerAdapter(new ArrayList<CFerm>(), getActivity()));
+        m_recyclerViewList.setAdapter(new CRecyclerAdapter(false, getActivity()));
 
         GetListFerms();
 
@@ -76,18 +78,25 @@ public class CListFragment extends Fragment {
                             array.add(str);
                         }
                         if(!array.isEmpty()) {
-                            m_textPlugList.setText("");
-                            m_recyclerViewList.setVisibility(View.VISIBLE);
                             ((CRecyclerAdapter) m_recyclerViewList.getAdapter()).onItemAdd(array);
                             array.clear();
                         }
+                    }
+
+                    int size = m_recyclerViewList.getAdapter().getItemCount();
+                    if(size > 0) {
+                        m_textPlugList.setText("");
+                        m_recyclerViewList.setVisibility(View.VISIBLE);
+                    } else {
+                        m_textPlugList.setText("Нет результатов");
+                        m_recyclerViewList.setVisibility(View.INVISIBLE);
                     }
                 }
             }
         }
     }
 
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NotNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         m_swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

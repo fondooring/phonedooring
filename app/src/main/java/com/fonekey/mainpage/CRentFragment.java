@@ -1,42 +1,26 @@
 package com.fonekey.mainpage;
 import com.fonekey.R;
 import com.fonekey.fermpage.CFermActivity;
-import com.fonekey.searchpage.CSearchActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import android.content.Intent;
-import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import android.view.LayoutInflater;
 import android.view.View;
+import android.os.Bundle;
+import android.content.Intent;
 import android.view.ViewGroup;
-import android.widget.Button;
-
+import android.widget.TextView;
+import android.view.LayoutInflater;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.view.View.OnClickListener;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class CRentFragment extends Fragment {
-
-    /*CRentFragment(Socket socket) {
-        super(socket);
-    }*/
 
     SwipeRefreshLayout m_swipeRefreshLayout;
     RecyclerView m_recyclerViewRent;
@@ -44,14 +28,9 @@ public class CRentFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(data == null)
-            return;
-
-        if( resultCode == 1889 ) {
-            //((CRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd(data.getStringExtra("definition"));
-            m_textPlugRent.setText("");
-            m_recyclerViewRent.setVisibility(View.VISIBLE);
-        }
+        if(data != null)
+            if(resultCode == 1889)
+                GetListFerms();
     }
 
     @Nullable
@@ -59,24 +38,15 @@ public class CRentFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rent, container, false);
 
-        m_swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshRent);
-        m_recyclerViewRent = (RecyclerView) view.findViewById(R.id.recyclerViewRent);
-        m_textPlugRent = (TextView) view.findViewById(R.id.txtPlugRent);
+        m_swipeRefreshLayout = view.findViewById(R.id.swipeRefreshRent);
+        m_recyclerViewRent = view.findViewById(R.id.recyclerViewRent);
+        m_textPlugRent = view.findViewById(R.id.txtPlugRent);
 
-        // получения списка квартир
-
-        if(true)
-            m_textPlugRent.setText(R.string.not_connection);
-
-        m_recyclerViewRent.setVisibility(View.INVISIBLE);
         m_recyclerViewRent.setHasFixedSize(true);
         m_recyclerViewRent.setLayoutManager(new LinearLayoutManager(getActivity()));
-        m_recyclerViewRent.setAdapter(new CRecyclerAdapter(new ArrayList<CFerm>(), getActivity()));
+        m_recyclerViewRent.setAdapter(new CRecyclerAdapter(true, getActivity()));
 
-        //for(int i = 0; i < 10; i++)
-          //  ((CRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd(Integer.toString(10000 * i));
-
-        FloatingActionButton btnAddFerm = (FloatingActionButton) view.findViewById(R.id.btnAddFerm);
+        FloatingActionButton btnAddFerm = view.findViewById(R.id.btnAddFerm);
         btnAddFerm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -86,7 +56,57 @@ public class CRentFragment extends Fragment {
             }
         });
 
+        GetListFerms();
+
         return view;
+    }
+
+    // Получения списка квартир
+    private void GetListFerms() {
+        m_textPlugRent.setText(R.string.not_connection);
+        m_recyclerViewRent.setVisibility(View.INVISIBLE);
+
+        String answer = "";
+        ArrayList<String> array = new ArrayList<>();
+        ArrayList<String> message = new ArrayList<>();
+        message.add("O");
+        // message.add(CMainActivity.m_userId);
+        message.add("0123456789");
+
+        String str = message.toString();
+        int result = CClient.SendData(str.substring(1, str.length() - 1).replace(", ", "|"));
+        if(result == 0) {
+            result = CClient.ReadData();
+            if(result == 0) {
+                answer = CClient.GetBuffer();
+                if(!answer.isEmpty()) {
+                    ((CRecyclerAdapter) m_recyclerViewRent.getAdapter()).onClear();
+                    StringTokenizer list = new StringTokenizer(answer, "#");
+                    while (list.hasMoreTokens()) {
+                        StringTokenizer item = new StringTokenizer(list.nextToken(), "|");
+                        while (item.hasMoreTokens()) {
+                            str = item.nextToken();
+                            if(str.equals("O"))
+                                continue;
+                            array.add(str);
+                        }
+                        if(!array.isEmpty()) {
+                            ((CRecyclerAdapter) m_recyclerViewRent.getAdapter()).onItemAdd(array);
+                            array.clear();
+                        }
+                    }
+
+                    int size = m_recyclerViewRent.getAdapter().getItemCount();
+                    if(size > 0) {
+                        m_textPlugRent.setText("");
+                        m_recyclerViewRent.setVisibility(View.VISIBLE);
+                    } else {
+                        m_textPlugRent.setText("Вы не сдаете квартиры");
+                        m_recyclerViewRent.setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+        }
     }
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -95,8 +115,7 @@ public class CRentFragment extends Fragment {
         m_swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                m_textPlugRent.setText("");
-                m_recyclerViewRent.setVisibility(View.VISIBLE);
+                GetListFerms();
                 m_swipeRefreshLayout.setRefreshing(false);
             }
         });

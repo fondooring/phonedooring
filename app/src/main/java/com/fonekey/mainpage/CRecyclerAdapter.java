@@ -1,4 +1,7 @@
 package com.fonekey.mainpage;
+import com.fonekey.R;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,32 +9,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
-
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.fonekey.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFermViewHolder>
 {
-    CFermViewHolder m_fermViewHolder;
-
+    private static boolean m_owner; // true - owner ferms, false - all list ferms
     private List<CFerm> m_lstFerm;
-    Context m_context;
+    private Context m_context;
 
-    public CRecyclerAdapter(List<CFerm> lstFerm, Context context) {
+    public CRecyclerAdapter(boolean owner, Context context) {
+        m_owner = owner;
         this.m_context = context;
-        this.m_lstFerm = lstFerm;
+        this.m_lstFerm = new ArrayList<>();
     }
 
     @Override
     public CFermViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
     {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ferm, viewGroup, false);
-        return m_fermViewHolder = new CFermViewHolder(view);
+        return new CFermViewHolder(view);
     }
 
     public static class CFermViewHolder extends RecyclerView.ViewHolder
@@ -43,19 +43,29 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         private TextView m_number_rooms;
         private TextView m_price;
 
-        private Button m_btnPay;
+        private Button m_btnPayDel;
 
         public CFermViewHolder(View itemView)
         {
             super (itemView);
 
-            m_street = (TextView) itemView.findViewById(R.id.txtStreet);
-            m_house = (TextView) itemView.findViewById(R.id.txtHouse);
-            m_rating = (TextView) itemView.findViewById(R.id.txtRating);
-            m_distance = (TextView) itemView.findViewById(R.id.txtDistance);
-            m_number_rooms = (TextView) itemView.findViewById(R.id.txtNumberRooms);
-            m_price = (TextView) itemView.findViewById(R.id.txtPrice);
-            m_btnPay = (Button) itemView.findViewById(R.id.btnPay);
+            m_street = itemView.findViewById(R.id.txtStreet);
+            m_house = itemView.findViewById(R.id.txtHouse);
+            m_rating = itemView.findViewById(R.id.txtRating);
+            m_distance = itemView.findViewById(R.id.txtDistance);
+            m_number_rooms = itemView.findViewById(R.id.txtNumberRooms);
+            m_price = itemView.findViewById(R.id.txtPrice);
+
+            m_btnPayDel = itemView.findViewById(R.id.btnPayDel);
+            ImageButton m_btnLike = itemView.findViewById(R.id.btnLike);
+
+            if(!m_owner) {
+                m_btnPayDel.setText("Купить");
+                m_btnLike.setVisibility(View.VISIBLE);
+            } else {
+                m_btnPayDel.setText("Удалить");
+                m_btnLike.setVisibility(View.INVISIBLE);
+            }
         }
     }
 
@@ -104,7 +114,7 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         viewHolder.m_number_rooms.setText(m_lstFerm.get(position).m_number_rooms);
         viewHolder.m_price.setText(m_lstFerm.get(position).m_price);
 
-        viewHolder.m_btnPay.setOnClickListener(new View.OnClickListener() {
+        viewHolder.m_btnPayDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int t = position;
