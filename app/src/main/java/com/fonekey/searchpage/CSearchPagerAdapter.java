@@ -1,14 +1,10 @@
 package com.fonekey.searchpage;
-import com.fonekey.mainpage.CSurrenderFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-
-import com.fonekey.mainpage.CFerm;
-import com.fonekey.mainpage.CSurrenderFragment;
 
 public class CSearchPagerAdapter extends FragmentPagerAdapter {
 

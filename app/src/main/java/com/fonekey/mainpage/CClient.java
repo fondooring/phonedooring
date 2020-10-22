@@ -59,7 +59,7 @@ public class CClient extends Thread {
         }
     }
 
-    static int SendData(String message) {
+    public static int SendData(String message) {
 
         int result = 1;
 
@@ -79,6 +79,20 @@ public class CClient extends Thread {
         }
 
         return result;
+    }
+
+    public static int ReadData() {
+
+        Thread thrRead = new Thread(new CClient.ReadThread());
+        thrRead.start();
+        try {
+            thrRead.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return 1;
+        }
+
+        return 0;
     }
 
     public static String GetBuffer() {

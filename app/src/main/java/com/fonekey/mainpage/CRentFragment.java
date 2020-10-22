@@ -48,7 +48,7 @@ public class CRentFragment extends Fragment {
             return;
 
         if( resultCode == 1889 ) {
-            ((CRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd(data.getStringExtra("definition"));
+            //((CRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd(data.getStringExtra("definition"));
             m_textPlugRent.setText("");
             m_recyclerViewRent.setVisibility(View.VISIBLE);
         }
@@ -73,8 +73,8 @@ public class CRentFragment extends Fragment {
         m_recyclerViewRent.setLayoutManager(new LinearLayoutManager(getActivity()));
         m_recyclerViewRent.setAdapter(new CRecyclerAdapter(new ArrayList<CFerm>(), getActivity()));
 
-        for(int i = 0; i < 10; i++)
-            ((CRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd(Integer.toString(10000 * i));
+        //for(int i = 0; i < 10; i++)
+          //  ((CRecyclerAdapter)m_recyclerViewRent.getAdapter()).onItemAdd(Integer.toString(10000 * i));
 
         FloatingActionButton btnAddFerm = (FloatingActionButton) view.findViewById(R.id.btnAddFerm);
         btnAddFerm.setOnClickListener(new View.OnClickListener() {

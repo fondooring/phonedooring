@@ -1,92 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
-    android:background="#00000000"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ImageView
+        android:id="@+id/imgFerm"
+        android:layout_width="100dp"
+        android:layout_height="300dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        app:srcCompat="@mipmap/ic_ferm"/>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/imgFerm"
-            android:layout_width="130dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@mipmap/ic_ferm" />
-
-        <ImageButton
-            android:id="@+id/btnLike"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="#00FFFFFF"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/btnDescription"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#00FFFFFF"
-            android:text="Описание"
-            app:layout_constraintEnd_toStartOf="@+id/btnLike"
-            app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@+id/imgFerm"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="horizontal"
+            android:background="#d3d3d3">
 
-        <Button
-            android:id="@+id/btnAppraisal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="#00FFFFFF"
-            android:text="Оценка"
-            app:layout_constraintEnd_toStartOf="@+id/btnLike"
-            app:layout_constraintStart_toEndOf="@+id/imgFerm"
-            app:layout_constraintTop_toBottomOf="@+id/btnDescription" />
+            <TextView
+                android:id="@+id/txtStreet"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Street"/>
+            <TextView
+                android:id="@+id/txtHouse"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:gravity="center"
+                android:text="House"/>
 
-        <Button
-            android:id="@+id/btnStatistics"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="#00FFFFFF"
-            android:text="Статистика"
-            app:layout_constraintEnd_toStartOf="@+id/btnLike"
-            app:layout_constraintStart_toEndOf="@+id/imgFerm"
-            app:layout_constraintTop_toBottomOf="@+id/btnAppraisal" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="end">
 
-        <Button
-            android:id="@+id/btnStatus"
-            android:layout_width="0dp"
+                <ImageButton
+                    android:id="@+id/btnLike"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/common_google_signin_btn_icon_dark_focused"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#00FFFFFF"
-            android:text="Статус"
-            app:layout_constraintEnd_toStartOf="@+id/btnLike"
-            app:layout_constraintStart_toEndOf="@+id/imgFerm"
-            app:layout_constraintTop_toBottomOf="@+id/btnStatistics" />
+            android:layout_marginVertical="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:text="Рейтинг:"/>
+            <TextView
+                android:id="@+id/txtRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rating"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:text="Растояние до центра:"/>
+            <TextView
+                android:id="@+id/txtDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Distance"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:text="км"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:text="Количество комнат:"/>
+            <TextView
+                android:id="@+id/txtNumberRooms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NumberRooms"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textSize="40sp"
+            android:text="Price"/>
 
         <Button
             android:id="@+id/btnPay"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Купить"
-            app:layout_constraintEnd_toEndOf="@+id/btnStatus"
-            app:layout_constraintStart_toStartOf="@+id/btnStatus"
-            app:layout_constraintTop_toBottomOf="@+id/btnStatus" />
+            android:layout_gravity="center"
+            android:textSize="30sp"
+            android:background="#ceffbc"
+            android:text="Купить"/>
 
-        <TextView
-            android:id="@+id/txtCost"
-            android:layout_width="54dp"
-            android:layout_height="28dp"
-            android:gravity="center_horizontal|center_vertical"
-            android:text="Цена"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </LinearLayout>
