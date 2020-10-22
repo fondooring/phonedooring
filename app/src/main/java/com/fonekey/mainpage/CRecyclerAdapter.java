@@ -23,8 +23,8 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
 
     public CRecyclerAdapter(boolean owner, Context context) {
         m_owner = owner;
-        this.m_context = context;
-        this.m_lstFerm = new ArrayList<>();
+        m_context = context;
+        m_lstFerm = new ArrayList<>();
     }
 
     @Override
@@ -99,9 +99,6 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         ferm.m_price = data.get(position++);
         m_lstFerm.add(0, ferm);
         notifyItemInserted(0);
-
-        //CFerm ferm = new CFerm(ferms);
-        //ferm.m_cost = street;
         // notifyItemRangeInserted(m_lstFerm.size() + 1, m_lstFerm.size());
     }
 
@@ -119,6 +116,9 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
             public void onClick(View view) {
                 int t = position;
 
+                if(!m_owner) {
+                    m_context.startActivity(new Intent(m_context, CRegistrationActivity.class));
+                }
 
                 //Fragment fragment = (Fragment) new CUserCardFragment(); // Фрагмент, которым собираетесь заменить первый фрагмент
 
@@ -126,8 +126,6 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
                 transaction.replace(R.id.layoutUserCard, new CUserCardFragment()); // Заменяете вторым фрагментом. Т.е. вместо метода `add()`, используете метод `replace()`
                 transaction.addToBackStack(null); // Добавляете в backstack, чтобы можно было вернутся обратно
                 transaction.commit(); // Коммитете*/
-
-                m_context.startActivity(new Intent(m_context, CRegistrationActivity.class));
                 //m_lstFerm.get(position).showBay();
             }
         });

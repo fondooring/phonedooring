@@ -1,45 +1,44 @@
 package com.fonekey.mainpage;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
+import com.fonekey.R;
 
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.fonekey.R;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.content.Context;
+import android.view.LayoutInflater;
 
 import java.util.List;
+import java.util.ArrayList;
 
 public class CSliderFermRecyclerAdapter extends RecyclerView.Adapter<CSliderFermRecyclerAdapter.CFermViewHolder>
 {
     private List<CFermSlider> m_lstFerm;
-    CFermViewHolder m_fermViewHolder;
-    SwitchCompat m_swchFermEnable;
+    private Context m_context;
 
-    public CSliderFermRecyclerAdapter(List<CFermSlider> lstFerm) {
-        m_lstFerm = lstFerm;
+    public CSliderFermRecyclerAdapter(Context context) {
+        m_context = context;
+        m_lstFerm = new ArrayList<>();
     }
 
     @Override
     public CFermViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
     {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ferm_slider, viewGroup, false);
-        m_swchFermEnable = (SwitchCompat) view.findViewById(R.id.switchEnableFerm);
-
-        return m_fermViewHolder = new CFermViewHolder(view);
+        return new CFermViewHolder(view);
     }
 
     public static class CFermViewHolder extends RecyclerView.ViewHolder
     {
+        TextView m_data;
         SwitchCompat m_swchFermEnable;
 
         public CFermViewHolder(View itemView) {
             super (itemView);
-
-            m_swchFermEnable = (SwitchCompat) itemView.findViewById(R.id.switchEnableFerm);
+            m_swchFermEnable = itemView.findViewById(R.id.switchEnableFerm);
+            m_data = itemView.findViewById(R.id.txtDateKey);
         }
     }
 
@@ -59,22 +58,27 @@ public class CSliderFermRecyclerAdapter extends RecyclerView.Adapter<CSliderFerm
             onItemDel(0);
     }
 
-    public void onItemAdd(String street)
+    public void onItemAdd(List<String> data)
     {
+        int position = 0;
         CFermSlider fermSlider = new CFermSlider();
-        fermSlider.m_street = street;
+        fermSlider.m_fermId = data.get(position++);
+        fermSlider.m_dataBegin = data.get(position++);
+        fermSlider.m_dataEnd = data.get(position++);
         fermSlider.m_enable = false;
+
         m_lstFerm.add(0, fermSlider);
         notifyItemInserted(0);
-        // notifyItemRangeInserted(m_lstFerm.size() + 1, m_lstFerm.size());
     }
 
     @Override
     public void onBindViewHolder(CFermViewHolder viewHolder, final int position) {
-        viewHolder.m_swchFermEnable.setText(m_lstFerm.get(position).m_street);
+        String data = m_lstFerm.get(position).m_dataBegin + " - " + m_lstFerm.get(position).m_dataEnd;
+        viewHolder.m_data.setText(data);
+        viewHolder.m_swchFermEnable.setText(m_lstFerm.get(position).m_fermId);
         viewHolder.m_swchFermEnable.setChecked(m_lstFerm.get(position).m_enable);
 
-        m_swchFermEnable.setOnClickListener(new View.OnClickListener() {
+        viewHolder.m_swchFermEnable.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int t = position;

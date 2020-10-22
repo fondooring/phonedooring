@@ -1,65 +1,101 @@
 package com.fonekey.mainpage;
 import com.fonekey.R;
 
-import com.fonekey.fermpage.CFermActivity;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import android.os.Bundle;
-import android.view.View;
-import android.content.Intent;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.view.LayoutInflater;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.view.LayoutInflater;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class CSurrenderFragment extends Fragment {
 
-    SwipeRefreshLayout m_swipeRefreshLayout;
-    RecyclerView m_recyclerViewSurrender;
     TextView m_textPlugSurrender;
-
-    int m_count = 0;
+    RecyclerView m_recyclerViewSurrender;
+    SwipeRefreshLayout m_swipeRefreshLayout;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_surrender, container, false);
 
-        m_swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshSurrender);
-        m_recyclerViewSurrender = (RecyclerView) view.findViewById(R.id.recyclerViewSurrender);
-        m_textPlugSurrender = (TextView) view.findViewById(R.id.txtPlugSurrender);
-        m_textPlugSurrender.setText("У вас нет арендованных квартир");
+        m_textPlugSurrender = view.findViewById(R.id.txtPlugSurrender);
+        m_swipeRefreshLayout = view.findViewById(R.id.swipeRefreshSurrender);
+        m_recyclerViewSurrender = view.findViewById(R.id.recyclerViewSurrender);
 
-        m_recyclerViewSurrender.setVisibility(View.INVISIBLE);
         m_recyclerViewSurrender.setHasFixedSize(true);
         m_recyclerViewSurrender.setLayoutManager(new LinearLayoutManager(getActivity()));
-        m_recyclerViewSurrender.setAdapter(new CSliderFermRecyclerAdapter(new ArrayList<CFermSlider>()));
+        m_recyclerViewSurrender.setAdapter(new CSliderFermRecyclerAdapter(getActivity()));
+
+        GetListFerms();
 
         return view;
     }
 
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    // Получения списка квартир
+    private void GetListFerms() {
+        m_textPlugSurrender.setText(R.string.not_connection);
+        m_recyclerViewSurrender.setVisibility(View.INVISIBLE);
+
+        String answer = "";
+        ArrayList<String> array = new ArrayList<>();
+        ArrayList<String> message = new ArrayList<>();
+        message.add("K");
+        // message.add(CMainActivity.m_userId);
+        message.add("0123456789");
+
+        String str = message.toString();
+        int result = CClient.SendData(str.substring(1, str.length() - 1).replace(", ", "|"));
+        if(result == 0) {
+            result = CClient.ReadData();
+            if(result == 0) {
+                answer = CClient.GetBuffer();
+                if(!answer.isEmpty()) {
+                    ((CSliderFermRecyclerAdapter) m_recyclerViewSurrender.getAdapter()).onClear();
+                    StringTokenizer list = new StringTokenizer(answer, "#");
+                    while (list.hasMoreTokens()) {
+                        StringTokenizer item = new StringTokenizer(list.nextToken(), "|");
+                        while (item.hasMoreTokens()) {
+                            str = item.nextToken();
+                            if(str.equals("K"))
+                                continue;
+                            array.add(str);
+                        }
+                        if(!array.isEmpty()) {
+                            ((CSliderFermRecyclerAdapter) m_recyclerViewSurrender.getAdapter()).onItemAdd(array);
+                            array.clear();
+                        }
+                    }
+
+                    int size = m_recyclerViewSurrender.getAdapter().getItemCount();
+                    if(size > 0) {
+                        m_textPlugSurrender.setText("");
+                        m_recyclerViewSurrender.setVisibility(View.VISIBLE);
+                    } else {
+                        m_textPlugSurrender.setText("У вас нет арендованных квартир");
+                        m_recyclerViewSurrender.setVisibility(View.INVISIBLE);
+                    }
+                }
+            }
+        }
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         m_swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                m_count++;
-                ((CSliderFermRecyclerAdapter)m_recyclerViewSurrender.getAdapter()).onClear();
-
-                for(int i = 0; i < m_count; i++)
-                     ((CSliderFermRecyclerAdapter)m_recyclerViewSurrender.getAdapter()).onItemAdd(Integer.toString(10000 * i));
-
-                m_textPlugSurrender.setText("");
-                m_recyclerViewSurrender.setVisibility(View.VISIBLE);
+                GetListFerms();
                 m_swipeRefreshLayout.setRefreshing(false);
             }
         });
