@@ -99,6 +99,7 @@ public class CRegistrationActivity extends AppCompatActivity {
                                         FileWriter myWriter = new FileWriter(m_externalAppDir);
                                         myWriter.write(str);
                                         myWriter.close();
+										CMainActivity.m_userId = str;
                                         m_txtRegistrationSuccess.setText("Регистрация пройдена");
                                     } catch (IOException e) {
                                         e.printStackTrace();
