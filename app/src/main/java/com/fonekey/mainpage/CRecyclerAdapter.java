@@ -1,5 +1,6 @@
 package com.fonekey.mainpage;
 import com.fonekey.R;
+import com.fonekey.searchpage.CSearch;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFermViewHolder>
 {
@@ -114,29 +116,50 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         viewHolder.m_btnPayDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int t = position;
+                if(CMainActivity.m_userId.equals("")) {
+                    if (!m_owner)
+                        m_context.startActivity(new Intent(m_context, CRegistrationActivity.class));
+                } else {
+                    String answer = "";
+                    ArrayList<String> array = new ArrayList<>();
+                    ArrayList<String> message = new ArrayList<>();
+                    message.add("P");
+                    message.add(CSearch.town);
+                    message.add("#");
+                    message.add(m_lstFerm.get(position).m_id);
+                    message.add("33");
+                    message.add("44");
 
-                if(!m_owner) {
-                    m_context.startActivity(new Intent(m_context, CRegistrationActivity.class));
+                    String str = message.toString();
+                    int result = CClient.SendData(str.substring(1, str.length() - 1).replace(", ", "|"));
+                    if(result == 0) {
+                        result = CClient.ReadData();
+                        if (result == 0) {
+                            answer = CClient.GetBuffer();
+                            if (!answer.isEmpty()) {
+                                StringTokenizer list = new StringTokenizer(answer, "#");
+                                while (list.hasMoreTokens()) {
+                                    StringTokenizer item = new StringTokenizer(list.nextToken(), "|");
+                                    while (item.hasMoreTokens()) {
+                                        str = item.nextToken();
+                                        if (str.equals("P"))
+                                            continue;
+                                        array.add(str);
+                                    }
+                                    if (!array.isEmpty())
+                                        array.clear();
+                                        if(str == "1") {
+                                            //
+                                        } else {
+                                            //
+                                        }
+                                }
+                            }
+                        }
+                    }
                 }
-
-                //Fragment fragment = (Fragment) new CUserCardFragment(); // Фрагмент, которым собираетесь заменить первый фрагмент
-
-                /*FragmentTransaction transaction = ((Activity)m_context).getFragmentManager().beginTransaction(); // Или getSupportFragmentManager(), если используете support.v4
-                transaction.replace(R.id.layoutUserCard, new CUserCardFragment()); // Заменяете вторым фрагментом. Т.е. вместо метода `add()`, используете метод `replace()`
-                transaction.addToBackStack(null); // Добавляете в backstack, чтобы можно было вернутся обратно
-                transaction.commit(); // Коммитете*/
-                //m_lstFerm.get(position).showBay();
             }
         });
-
-        /*viewHolder.btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent =  new Intent(context, ActivityToStart.class);
-                context.startActivity(intent);
-            }
-        });*/
     }
 
     @Override

@@ -3,7 +3,6 @@ import com.fonekey.R;
 
 import com.fonekey.mainpage.CClient;
 import com.fonekey.mainpage.CRecyclerAdapter;
-import com.fonekey.mainpage.CSliderFermRecyclerAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
