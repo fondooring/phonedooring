@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.ui.AppBarConfiguration;
 
+import com.fonekey.searchpage.CSearch;
 import com.fonekey.settingssearch.CDateFragment;
 import com.fonekey.settingssearch.CTownFragment;
 import com.fonekey.settingssearch.CNumberPersonFragment;
@@ -32,6 +33,7 @@ public class CMainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
 
     public static CClient m_client;
+    public CSearch m_search;
     public static String m_userId;
 
     @Override
@@ -39,6 +41,7 @@ public class CMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(m_layuot);
 
+        m_search = new CSearch();
         m_client = new CClient();
         m_townFragment = new CTownFragment();
         m_dateFragment = new CDateFragment();

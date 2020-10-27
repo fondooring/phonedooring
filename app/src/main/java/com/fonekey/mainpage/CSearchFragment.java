@@ -34,10 +34,6 @@ public class CSearchFragment  extends Fragment {
                 //CSearch.number_person = ((Button) view.findViewById(R.id.btnNumberPerson)).getText().toString();
                 //CSearch.date_begin = ((Button) view.findViewById(R.id.btnDate)).getText().toString();
 
-                CSearch.town = "moscow";
-                CSearch.date_begin = "0123456789";
-                CSearch.date_end = "9876543210";
-
                 Intent intent = new Intent(getActivity(), CSearchActivity.class);
                 startActivity(intent);
             }
