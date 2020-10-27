@@ -1,90 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent">
 
-    <ScrollView
+    <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="20dp">
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/txtOwner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:hint="Собственник"/>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp">
+        <EditText
+            android:id="@+id/txtTown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Город"/>
 
-                <EditText
-                    android:id="@+id/txtStreetFerm"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:inputType="textMultiLine"
-                    android:hint="@string/location"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        <EditText
+            android:id="@+id/txtStreetSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Улица"/>
 
-                <EditText
-                    android:id="@+id/txtDefinitionFerm"
-                    android:layout_width="0dp"
-                    android:layout_height="174dp"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:inputType="textMultiLine"
-                    android:hint="@string/description"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtStreetFerm" />
+        <EditText
+            android:id="@+id/txtHouseSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Дом"/>
 
-                <EditText
-                    android:id="@+id/txtPhoto"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:hint="@string/photo"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txtDefinitionFerm" />
+        <EditText
+            android:id="@+id/txtGeo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Гео позиция"/>
 
-                <com.fonekey.mainpage.CCalendarViewScrollable
-                    android:id="@+id/calendarView"
-                    android:layout_width="match_parent"
-                    android:layout_height="302dp"
-                    android:layout_marginBottom="30dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/btnSaveFerm"
-                    app:layout_constraintVertical_bias="0" />
+        <EditText
+            android:id="@+id/txtIpHouse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="IP-адрес квартиры"/>
 
-                <Button
-                    android:id="@+id/btnSaveFerm"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:text="@string/save"
-                    app:layout_constraintEnd_toEndOf="@+id/txtPhoto"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintStart_toStartOf="@+id/txtPhoto"
-                    app:layout_constraintTop_toBottomOf="@+id/txtPhoto" />
+        <EditText
+            android:id="@+id/txtDistanceSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Расстояние до центра"/>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </LinearLayout>
-    </ScrollView>
+        <EditText
+            android:id="@+id/txtNumberPersonSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Количество персон"/>
 
-</LinearLayout>
+        <EditText
+            android:id="@+id/txtNumberRoomsSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Количество комнат"/>
+
+        <EditText
+            android:id="@+id/txtPriceSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Цена"/>
+
+        <EditText
+            android:id="@+id/txtDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Описание"/>
+
+        <EditText
+            android:id="@+id/txtPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Фото"/>
+
+        <Button
+            android:id="@+id/btnSaveFerm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/save"/>
+
+        <com.fonekey.mainpage.CCalendarViewScrollable
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </GridLayout>
+</ScrollView>

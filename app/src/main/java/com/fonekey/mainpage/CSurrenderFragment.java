@@ -50,8 +50,7 @@ public class CSurrenderFragment extends Fragment {
         ArrayList<String> array = new ArrayList<>();
         ArrayList<String> message = new ArrayList<>();
         message.add("K");
-        // message.add(CMainActivity.m_userId);
-        message.add("0123456789");
+        message.add(CMainActivity.m_userId + "|");
 
         String str = message.toString();
         int result = CClient.SendData(str.substring(1, str.length() - 1).replace(", ", "|"));

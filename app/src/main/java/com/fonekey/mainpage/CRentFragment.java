@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.StringTokenizer;
 
 public class CRentFragment extends Fragment {
@@ -28,9 +29,72 @@ public class CRentFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(data != null)
-            if(resultCode == 1889)
-                GetListFerms();
+        if(data != null) {
+            if(resultCode == 1889) {
+                m_textPlugRent.setText(R.string.not_connection);
+
+                String answer = "";
+                ArrayList<String> array = new ArrayList<>();
+                ArrayList<String> message = new ArrayList<>();
+                message.add("S");
+                message.add("P");
+                message.add(data.getStringExtra("numberPersonSave"));
+                message.add("D");
+                message.add("L");
+                message.add(data.getStringExtra("streetSave"));
+                message.add(data.getStringExtra("houseSave"));
+                Random random = new Random();
+                message.add(random.nextInt(10) + "." + random.nextInt(10));
+                message.add(data.getStringExtra("distanceSave"));
+                message.add(data.getStringExtra("numberRoomsSave"));
+                message.add(data.getStringExtra("priceSave"));
+                message.add("R");
+                message.add(data.getStringExtra("owner"));
+                message.add(data.getStringExtra("geo"));
+                message.add(data.getStringExtra("description"));
+                message.add("F");
+                message.add("0");
+                message.add("C");
+                message.add("0");
+                message.add("I");
+                message.add(data.getStringExtra("ipHouse"));
+                message.add("U");
+                message.add(CMainActivity.m_userId + "|");
+
+                String str = message.toString();
+                int result = CClient.SendData(str.substring(1, str.length() - 1).replace(", ", "|"));
+                if(result == 0) {
+                    result = CClient.ReadData();
+                    if(result == 0) {
+                        answer = CClient.GetBuffer();
+                        if(!answer.isEmpty()) {
+                            ((CRecyclerAdapter) m_recyclerViewRent.getAdapter()).onClear();
+                            StringTokenizer list = new StringTokenizer(answer, "#");
+                            while (list.hasMoreTokens()) {
+                                StringTokenizer item = new StringTokenizer(list.nextToken(), "|");
+                                while (item.hasMoreTokens()) {
+                                    str = item.nextToken();
+                                    if(str.equals("S"))
+                                        continue;
+                                    array.add(str);
+                                }
+                            }
+                            if(!array.isEmpty()) {
+                                if(str.equals("1"))
+                                    m_textPlugRent.setText("Квартира создана");
+                                else
+                                    m_textPlugRent.setText("Квартира не создана");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    private void SaveFerm() {
+
     }
 
     @Nullable
@@ -70,8 +134,7 @@ public class CRentFragment extends Fragment {
         ArrayList<String> array = new ArrayList<>();
         ArrayList<String> message = new ArrayList<>();
         message.add("O");
-        // message.add(CMainActivity.m_userId);
-        message.add("0123456789");
+        message.add(CMainActivity.m_userId + "|");
 
         String str = message.toString();
         int result = CClient.SendData(str.substring(1, str.length() - 1).replace(", ", "|"));

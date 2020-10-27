@@ -17,8 +17,12 @@ import androidx.fragment.app.Fragment;
 
 public class CSearchFragment  extends Fragment {
 
+    private static Button m_numberPerson;
+
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_search, container, false);
+
+        m_numberPerson = view.findViewById(R.id.btnNumberPerson);
 
         Button m_btnSearch = (Button) view.findViewById(R.id.btnSearch);
         m_btnSearch.setOnClickListener(new View.OnClickListener() {
@@ -31,7 +35,6 @@ public class CSearchFragment  extends Fragment {
                 //CSearch.date_begin = ((Button) view.findViewById(R.id.btnDate)).getText().toString();
 
                 CSearch.town = "moscow";
-                CSearch.number_person = "3";
                 CSearch.date_begin = "0123456789";
                 CSearch.date_end = "9876543210";
 
@@ -41,5 +44,9 @@ public class CSearchFragment  extends Fragment {
         });
 
         return view;
+    }
+
+    static public void RefreshValue() {
+        m_numberPerson.setText(CSearch.number_person);
     }
 }
