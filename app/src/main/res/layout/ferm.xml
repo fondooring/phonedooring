@@ -121,7 +121,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="30sp"
-            android:background="#ceffbc"
             android:text="NULL"/>
 
     </LinearLayout>

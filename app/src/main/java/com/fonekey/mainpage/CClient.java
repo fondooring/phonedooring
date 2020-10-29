@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
@@ -64,11 +65,31 @@ public class CClient extends Thread {
         int result = 1;
 
         if(m_socket != null) {
-            result = 0;
             try {
                 PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream())), true);
                 out.println(message);
+                result = 0;
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
+        return result;
+    }
+
+    public static int SendArray(byte[] message) {
+        int result = 1;
+
+        if(m_socket != null) {
+            try {
+                DataOutputStream dos = new DataOutputStream(m_socket.getOutputStream());
+                dos.writeInt(message.length);
+                dos.write(message,0,message.length);
+                result = 0;
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {

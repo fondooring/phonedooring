@@ -5,6 +5,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.View;
 import android.os.Bundle;
@@ -12,13 +16,8 @@ import android.content.Intent;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.view.LayoutInflater;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.StringTokenizer;
 
 public class CRentFragment extends Fragment {
@@ -35,34 +34,9 @@ public class CRentFragment extends Fragment {
 
                 String answer = "";
                 ArrayList<String> array = new ArrayList<>();
-                ArrayList<String> message = new ArrayList<>();
-                message.add("S");
-                message.add("P");
-                message.add(data.getStringExtra("numberPersonSave"));
-                message.add("D");
-                message.add("L");
-                message.add(data.getStringExtra("streetSave"));
-                message.add(data.getStringExtra("houseSave"));
-                Random random = new Random();
-                message.add(random.nextInt(10) + "." + random.nextInt(10));
-                message.add(data.getStringExtra("distanceSave"));
-                message.add(data.getStringExtra("numberRoomsSave"));
-                message.add(data.getStringExtra("priceSave"));
-                message.add("R");
-                message.add(data.getStringExtra("owner"));
-                message.add(data.getStringExtra("geo"));
-                message.add(data.getStringExtra("description"));
-                message.add("F");
-                message.add("0");
-                message.add("C");
-                message.add("0");
-                message.add("I");
-                message.add(data.getStringExtra("ipHouse"));
-                message.add("U");
-                message.add(CMainActivity.m_userId + "|");
-
-                String str = message.toString();
-                int result = CClient.SendData(str.substring(1, str.length() - 1).replace(", ", "|"));
+                String str = data.getStringExtra("message");
+                byte[] ans = data.getByteArrayExtra("message");
+                int result = CClient.SendArray(ans);
                 if(result == 0) {
                     result = CClient.ReadData();
                     if(result == 0) {
@@ -90,11 +64,6 @@ public class CRentFragment extends Fragment {
                 }
             }
         }
-    }
-
-
-    private void SaveFerm() {
-
     }
 
     @Nullable

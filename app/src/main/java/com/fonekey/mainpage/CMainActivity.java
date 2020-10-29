@@ -1,10 +1,12 @@
 package com.fonekey.mainpage;
 import com.fonekey.R;
+import com.fonekey.searchpage.CSearch;
+import com.fonekey.settingssearch.CDateFragment;
+import com.fonekey.settingssearch.CTownFragment;
+import com.fonekey.settingssearch.CNumberPersonFragment;
+import com.google.android.material.navigation.NavigationView;
 
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.View;
-import android.app.FragmentTransaction;
+import org.jetbrains.annotations.NotNull;
 
 import androidx.navigation.Navigation;
 import androidx.navigation.NavController;
@@ -13,11 +15,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.ui.AppBarConfiguration;
 
-import com.fonekey.searchpage.CSearch;
-import com.fonekey.settingssearch.CDateFragment;
-import com.fonekey.settingssearch.CTownFragment;
-import com.fonekey.settingssearch.CNumberPersonFragment;
-import com.google.android.material.navigation.NavigationView;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.View;
+import android.app.FragmentTransaction;
 
 import java.io.File;
 import java.io.FileReader;
@@ -32,15 +33,16 @@ public class CMainActivity extends AppCompatActivity {
     private CNumberPersonFragment m_numberPersonFragment;
     private AppBarConfiguration mAppBarConfiguration;
 
-    public static CClient m_client;
     public CSearch m_search;
     public static String m_userId;
+    public static CClient m_client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(m_layuot);
 
+        m_userId = "0000000000";
         m_search = new CSearch();
         m_client = new CClient();
         m_townFragment = new CTownFragment();
@@ -59,7 +61,7 @@ public class CMainActivity extends AppCompatActivity {
         LoadUserId();
     }
 
-    public void onClick(View v) {
+    public void onClick(@NotNull View v) {
         FragmentTransaction m_fTrans = getFragmentManager().beginTransaction();
         switch (v.getId()) {
             case R.id.btnTown:
