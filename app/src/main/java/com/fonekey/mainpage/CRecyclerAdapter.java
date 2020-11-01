@@ -4,18 +4,21 @@ import com.fonekey.searchpage.CSearch;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.content.Intent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.view.ViewGroup;
+import android.content.Intent;
+import android.content.Context;
 import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.ImageButton;
+import android.view.LayoutInflater;
+import android.graphics.BitmapFactory;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
+import java.io.ByteArrayOutputStream;
 
 public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFermViewHolder>
 {
@@ -45,6 +48,8 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         private TextView m_number_rooms;
         private TextView m_price;
 
+        private ImageView m_imgFerm;
+
         private Button m_btnPayDel;
 
         public CFermViewHolder(View itemView)
@@ -57,6 +62,8 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
             m_distance = itemView.findViewById(R.id.txtDistance);
             m_number_rooms = itemView.findViewById(R.id.txtNumberRooms);
             m_price = itemView.findViewById(R.id.txtPrice);
+
+            m_imgFerm = itemView.findViewById(R.id.imgFerm);
 
             m_btnPayDel = itemView.findViewById(R.id.btnPayDel);
             ImageButton m_btnLike = itemView.findViewById(R.id.btnLike);
@@ -99,6 +106,28 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         ferm.m_distance = data.get(position++);
         ferm.m_number_rooms = data.get(position++);
         ferm.m_price = data.get(position++);
+        //ferm.m_foto = data.get(position++);
+
+        m_lstFerm.add(0, ferm);
+        notifyItemInserted(0);
+        // notifyItemRangeInserted(m_lstFerm.size() + 1, m_lstFerm.size());
+    }
+
+    public void onItemArray(ArrayList<ByteArrayOutputStream> data)
+    {
+        int position = 3;
+        CFerm ferm = new CFerm();
+        ferm.m_id = data.get(position++).toString();
+        position++;
+        ferm.m_town = "Москва";
+        ferm.m_street = data.get(position++).toString();
+        ferm.m_house = data.get(position++).toString();
+        ferm.m_rating = data.get(position++).toString();
+        ferm.m_distance = data.get(position++).toString();
+        ferm.m_number_rooms = data.get(position++).toString();
+        ferm.m_price = data.get(position++).toString();
+        ferm.m_foto = data.get(position++).toByteArray();
+
         m_lstFerm.add(0, ferm);
         notifyItemInserted(0);
         // notifyItemRangeInserted(m_lstFerm.size() + 1, m_lstFerm.size());
@@ -112,6 +141,7 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         viewHolder.m_distance.setText(m_lstFerm.get(position).m_distance);
         viewHolder.m_number_rooms.setText(m_lstFerm.get(position).m_number_rooms);
         viewHolder.m_price.setText(m_lstFerm.get(position).m_price);
+        viewHolder.m_imgFerm.setImageBitmap(BitmapFactory.decodeByteArray(m_lstFerm.get(position).m_foto, 0, m_lstFerm.get(position).m_foto.length));
 
         viewHolder.m_btnPayDel.setOnClickListener(new View.OnClickListener() {
             @Override

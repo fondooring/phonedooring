@@ -85,9 +85,13 @@ public class CFermActivity extends AppCompatActivity {
 
                 Random random = new Random();
                 try {
-                    m_buffer.write("S|P|".getBytes());
+                    m_buffer.write("S|U|".getBytes());
+                    m_buffer.write(CMainActivity.m_userId.getBytes());
+                    m_buffer.write("|T|".getBytes());
+                    m_buffer.write("111".getBytes());
+                    m_buffer.write("|P|".getBytes());
                     m_buffer.write(m_numberPersonSave.getText().toString().getBytes());
-                    m_buffer.write("|D|L|".getBytes());
+                    m_buffer.write("|L|".getBytes());
                     m_buffer.write(m_streetSave.getText().toString().getBytes());
                     m_buffer.write("|".getBytes());
                     m_buffer.write(m_houseSave.getText().toString().getBytes());
@@ -105,6 +109,8 @@ public class CFermActivity extends AppCompatActivity {
                     m_buffer.write(m_geo.getText().toString().getBytes());
                     m_buffer.write("|".getBytes());
                     m_buffer.write(m_description.getText().toString().getBytes());
+                    m_buffer.write("|I|".getBytes());
+                    m_buffer.write(m_ipHouse.getText().toString().getBytes());
                     m_buffer.write("|F|".getBytes());
                     m_buffer.write(String.valueOf(m_bufferFoto.size()).getBytes());
                     m_buffer.write("|".getBytes());
@@ -112,11 +118,6 @@ public class CFermActivity extends AppCompatActivity {
                         m_buffer.write(p.toByteArray());
                         m_buffer.write("|".getBytes());
                     }
-                    m_buffer.write("C|0|I|".getBytes());
-                    m_buffer.write(m_ipHouse.getText().toString().getBytes());
-                    m_buffer.write("|U|".getBytes());
-                    m_buffer.write(CMainActivity.m_userId.getBytes());
-                    m_buffer.write("|".getBytes());
 
                 } catch (IOException e) {
                     e.printStackTrace();

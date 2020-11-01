@@ -9,4 +9,5 @@ public class CFerm {
     public String m_distance;
     public String m_number_rooms;
     public String m_price;
+    public byte[] m_foto;
 }
