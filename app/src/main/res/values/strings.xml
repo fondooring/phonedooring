@@ -12,8 +12,8 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="search">Поиск</string>
-    <string name="rent">Аренда</string>
-    <string name="surrender">Сдача</string>
+    <string name="rent">Сдать в аренду</string>
+    <string name="surrender">Мои ключи</string>
     <string name="welcome_name">Здравствуйте,\nпользователь</string>
     <string name="town">Выберите город</string>
     <string name="date">Выберите дату</string>

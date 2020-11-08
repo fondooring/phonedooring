@@ -10,7 +10,7 @@
     <fragment
         android:id="@+id/menu_search"
         android:name="com.fonekey.mainpage.CSearchFragment"
-        android:label="Поиск квартиры"
+        android:label="PhoneDooring"
         tools:layout="@layout/fragment_search"/>
 
     <fragment
