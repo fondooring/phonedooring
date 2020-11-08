@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#B6D9EF">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -16,41 +17,72 @@
 
             <TextView
                 android:id="@+id/txtName"
-                android:text="@string/welcome_name"
+                android:text="Найти квартиру:"
+                android:textSize="20sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"/>
+                android:gravity="center"
+                android:padding="20dp"/>
 
-            <Button
-                android:id="@+id/btnTown"
-                android:text="@string/town"
-                android:layout_width="300dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_gravity="center"
-                android:onClick="onClick"/>
+                android:background="#EBEBB9"
+                android:padding="2dp">
 
-            <Button
-                android:id="@+id/btnDate"
-                android:text="@string/date"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:onClick="onClick"/>
+                <Button
+                    android:id="@+id/btnTown"
+                    android:text="Москва"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:onClick="onClick"
+                    android:gravity="center_vertical"
+                    android:drawableLeft="@drawable/baseline_search_24"
+                    android:drawableStart="@drawable/baseline_search_24"
+                    android:drawablePadding="10dp"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#FFFFFF"/>
 
-            <Button
-                android:id="@+id/btnNumberPerson"
-                android:text="@string/number_person"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:onClick="onClick"/>
+                <Button
+                    android:id="@+id/btnDate"
+                    android:text="1.1.2020 - 31.12.2020"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:onClick="onClick"
+                    android:gravity="center_vertical"
+                    android:drawableLeft="@drawable/baseline_date_range_24"
+                    android:drawableStart="@drawable/baseline_date_range_24"
+                    android:drawablePadding="10dp"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#FFFFFF"/>
 
-            <Button
-                android:id="@+id/btnSearch"
-                android:text="@string/find"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                <Button
+                    android:id="@+id/btnNumberPerson"
+                    android:text="3"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:onClick="onClick"
+                    android:gravity="center_vertical"
+                    android:drawableLeft="@drawable/baseline_people_alt_24"
+                    android:drawableStart="@drawable/baseline_people_alt_24"
+                    android:drawablePadding="10dp"
+                    android:textAllCaps="false"
+                    android:backgroundTint="#FFFFFF"/>
+
+                <Button
+                    android:id="@+id/btnSearch"
+                    android:text="@string/find"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#FFFFFF"/>
+
+            </LinearLayout>
 
             <FrameLayout
                 android:id="@+id/frgmCont"
