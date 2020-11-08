@@ -5,24 +5,24 @@
         android:id="@+id/menu_regisration"
         android:title="@string/registration"
         android:orderInCategory="1"
-        android:icon="@drawable/common_google_signin_btn_icon_disabled"/>
+        android:icon="@drawable/baseline_account_circle_24"/>
 
     <item
         android:id="@+id/menu_search"
         android:title="@string/search"
         android:orderInCategory="1"
-        android:icon="@drawable/abc_vector_test"/>
+        android:icon="@drawable/baseline_search_24"/>
 
     <item
         android:id="@+id/menu_rent"
         android:title="@string/rent"
         android:orderInCategory="1"
-        android:icon="@drawable/common_google_signin_btn_icon_light_focused"/>
+        android:icon="@drawable/baseline_location_city_24"/>
 
     <item
         android:id="@+id/menu_surrender"
         android:title="@string/surrender"
         android:orderInCategory="1"
-        android:icon="@drawable/common_google_signin_btn_icon_disabled"/>
+        android:icon="@drawable/baseline_screen_lock_portrait_24"/>
 
 </menu>

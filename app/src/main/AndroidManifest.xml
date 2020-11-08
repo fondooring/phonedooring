@@ -33,7 +33,7 @@
 
         <activity
             android:name=".mainpage.CMainActivity"
-            android:label="Fonkey">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

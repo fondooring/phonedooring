@@ -28,7 +28,7 @@
     <activity
         android:id="@+id/menu_regisration"
         android:name="com.fonekey.mainpage.CRegistrationActivity"
-        android:label=""
+        android:label="Регистрация"
         tools:layout="@layout/activity_login"/>
 
 </navigation>
