@@ -116,6 +116,8 @@ public class CFermActivity extends AppCompatActivity {
                     m_buffer.write("|".getBytes());
                     for(ByteArrayOutputStream p : m_bufferFoto) {
                         m_buffer.write(p.toByteArray());
+                        m_buffer.write(0xAA);
+                        m_buffer.write(0xBB);
                         m_buffer.write("|".getBytes());
                     }
 

@@ -87,6 +87,7 @@ public class CListFragment extends Fragment {
 
                 byte[] answerArray = CClient.GetBufferArray();
                 int sizeAnswerArray = CClient.GetSizeBufferArray();
+
                 if(sizeAnswerArray != 0) {
 
                     ByteArrayOutputStream fillerFerst = new ByteArrayOutputStream();
@@ -104,7 +105,7 @@ public class CListFragment extends Fragment {
 
                                 for(int j = 0; j < sizeItem; j++) {
 
-                                    if(item[j] == '|') {
+                                    if(item[j] == '|' || j == sizeItem - 1) {
                                         m_listMessage.add(fillerSecond);
                                         fillerSecond = new ByteArrayOutputStream();
                                     } else

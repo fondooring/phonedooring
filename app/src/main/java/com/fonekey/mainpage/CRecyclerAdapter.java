@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import android.view.LayoutInflater;
 import android.graphics.BitmapFactory;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -113,8 +114,7 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         // notifyItemRangeInserted(m_lstFerm.size() + 1, m_lstFerm.size());
     }
 
-    public void onItemArray(ArrayList<ByteArrayOutputStream> data)
-    {
+    public void onItemArray(ArrayList<ByteArrayOutputStream> data) {
         int position = 3;
         CFerm ferm = new CFerm();
         ferm.m_id = data.get(position++).toString();
@@ -126,6 +126,20 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         ferm.m_distance = data.get(position++).toString();
         ferm.m_number_rooms = data.get(position++).toString();
         ferm.m_price = data.get(position++).toString();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int size = data.size();
+
+        for(int i = 0; i < size; i++) {
+            try {
+                out.write(data.get(position++).toByteArray());
+                out.write("|".getBytes());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+
         ferm.m_foto = data.get(position++).toByteArray();
 
         m_lstFerm.add(0, ferm);

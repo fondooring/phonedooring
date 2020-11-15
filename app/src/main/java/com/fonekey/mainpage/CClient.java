@@ -1,5 +1,6 @@
 package com.fonekey.mainpage;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.Socket;
 import java.io.IOException;
@@ -20,8 +21,9 @@ public class CClient extends Thread {
 
     private static String m_buffer = "";
 
-    private static byte[] m_bufferArray = new byte[1024];
+    private static byte[] m_bufferArray = new byte[64000];
     private static int m_sizeBufferArray = 0;
+    private static ByteArrayOutputStream m_bufferArrayStream;
 
     CClient() {
         new Thread(new ClientThread()).start();
@@ -73,8 +75,32 @@ public class CClient extends Thread {
             if(m_socket != null) {
 
                 try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                try {
                     InputStream stream = m_socket.getInputStream();
-                    m_sizeBufferArray = stream.read(m_bufferArray);
+                    m_bufferArrayStream = new ByteArrayOutputStream();
+                    //m_sizeBufferArray = stream.read(m_bufferArray);
+
+                    int sizeRead = 0;
+                    byte[] buffer = new byte[1460];
+
+                    //while ((sizeRead = stream.read(buffer)) != -1) {
+                    while (m_sizeBufferArray < 64000) {
+                        sizeRead = stream.read(buffer);
+                        m_bufferArrayStream.write(buffer, 0, sizeRead);
+                        m_sizeBufferArray += sizeRead;
+                    }
+
+                    m_bufferArray = m_bufferArrayStream.toByteArray();
+
+                    if(m_bufferArray.length != m_sizeBufferArray) {
+                        int t = 12;
+                    }
+
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
