@@ -24,8 +24,8 @@ import java.io.ByteArrayOutputStream;
 public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFermViewHolder>
 {
     private static boolean m_owner; // true - owner ferms, false - all list ferms
-    private List<CFerm> m_lstFerm;
-    private Context m_context;
+    private final List<CFerm> m_lstFerm;
+    private final Context m_context;
 
     public CRecyclerAdapter(boolean owner, Context context) {
         m_owner = owner;
@@ -40,18 +40,18 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         return new CFermViewHolder(view);
     }
 
-    public static class CFermViewHolder extends RecyclerView.ViewHolder
+    public static class CFermViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-        private TextView m_street;
-        private TextView m_house;
-        private TextView m_rating;
-        private TextView m_distance;
-        private TextView m_number_rooms;
-        private TextView m_price;
+        private final TextView m_street;
+        private final TextView m_house;
+        private final TextView m_rating;
+        private final TextView m_distance;
+        private final TextView m_number_rooms;
+        private final TextView m_price;
 
-        private ImageView m_imgFerm;
+        private final ImageView m_imgFerm;
 
-        private Button m_btnPayDel;
+        private final Button m_btnPayDel;
 
         public CFermViewHolder(View itemView)
         {
@@ -76,6 +76,11 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
                 m_btnPayDel.setText("Удалить");
                 m_btnLike.setVisibility(View.INVISIBLE);
             }
+        }
+
+        @Override
+        public void onClick(View v) {
+            int t = 21;
         }
     }
 
@@ -115,31 +120,19 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
     }
 
     public void onItemArray(ArrayList<ByteArrayOutputStream> data) {
-        int position = 3;
+        int position = 0;
         CFerm ferm = new CFerm();
         ferm.m_id = data.get(position++).toString();
-        position++;
-        ferm.m_town = "Москва";
+
+        if(data.get(position++).toString().equals("111"))
+            ferm.m_town = "Москва";
+
         ferm.m_street = data.get(position++).toString();
         ferm.m_house = data.get(position++).toString();
         ferm.m_rating = data.get(position++).toString();
         ferm.m_distance = data.get(position++).toString();
         ferm.m_number_rooms = data.get(position++).toString();
         ferm.m_price = data.get(position++).toString();
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int size = data.size();
-
-        for(int i = 0; i < size; i++) {
-            try {
-                out.write(data.get(position++).toByteArray());
-                out.write("|".getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-
         ferm.m_foto = data.get(position++).toByteArray();
 
         m_lstFerm.add(0, ferm);

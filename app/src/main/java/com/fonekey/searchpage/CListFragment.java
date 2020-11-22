@@ -2,7 +2,6 @@ package com.fonekey.searchpage;
 import com.fonekey.R;
 
 import com.fonekey.mainpage.CClient;
-import com.fonekey.mainpage.CMainActivity;
 import com.fonekey.mainpage.CRecyclerAdapter;
 
 import androidx.annotation.NonNull;
@@ -23,17 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 public class CListFragment extends Fragment {
 
     SwipeRefreshLayout m_swipeRefreshLayout;
     RecyclerView m_recyclerViewList;
     TextView m_textPlugList;
-
-    ArrayList<ByteArrayOutputStream> m_listMessage = new ArrayList<>();
-
-    ByteArrayOutputStream m_buffer;
 
     @Nullable
     @Override
@@ -43,8 +37,6 @@ public class CListFragment extends Fragment {
         m_swipeRefreshLayout = view.findViewById(R.id.swipeRefreshList);
         m_recyclerViewList = view.findViewById(R.id.recycle_view);
         m_textPlugList = view.findViewById(R.id.txtPlugList);
-
-        m_buffer = new ByteArrayOutputStream();
 
         m_recyclerViewList.setHasFixedSize(true);
         m_recyclerViewList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -59,68 +51,40 @@ public class CListFragment extends Fragment {
     private void GetListFerms() {
         m_textPlugList.setText(R.string.not_connection);
         m_recyclerViewList.setVisibility(View.INVISIBLE);
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         try {
-            m_buffer.write("L|T|".getBytes());
-            m_buffer.write("111".getBytes());
-            m_buffer.write("|P|".getBytes());
-            m_buffer.write(CSearch.number_person.getBytes());
-            m_buffer.write("|D|".getBytes());
-            //m_buffer.write(CSearch.date_begin.getBytes());
-            m_buffer.write("20-10-2020 12:00:00".getBytes());
-            m_buffer.write("|".getBytes());
-            //m_buffer.write(CSearch.date_end.getBytes());
-            m_buffer.write("20-10-2020 12:00:01".getBytes());
-            m_buffer.write("|".getBytes());
+            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x4C});
+            buffer.write("111".getBytes());
+            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x60});
+            buffer.write(CSearch.number_person.getBytes());
+            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x60});
+            //buffer.write(CSearch.date_begin.getBytes());
+            buffer.write("20-10-2020 12:00:00".getBytes());
+            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x60});
+            //buffer.write(CSearch.date_end.getBytes());
+            buffer.write("20-10-2020 12:00:01".getBytes());
+            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0xFF});
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        String answer = "";
-        ArrayList<String> array = new ArrayList<>();
-
-        int result = CClient.SendArray(m_buffer.toByteArray());
+        int result = CClient.SendArray(buffer.toByteArray());
         if(result == 0) {
             result = CClient.ReadData();
             if(result == 0) {
 
                 byte[] answerArray = CClient.GetBufferArray();
-                int sizeAnswerArray = CClient.GetSizeBufferArray();
+                int sizeArray = answerArray.length;
 
-                if(sizeAnswerArray != 0) {
-
-                    ByteArrayOutputStream fillerFerst = new ByteArrayOutputStream();
-
-                    for(int i = 0; i < sizeAnswerArray; i++) {
-
-                        if(answerArray[i] == '#' || i == sizeAnswerArray - 1) {
-                            byte[] item = fillerFerst.toByteArray();
-                            int sizeItem = fillerFerst.size();
-                            fillerFerst = new ByteArrayOutputStream();
-
-                            if(sizeItem != 0) {
-
-                                ByteArrayOutputStream fillerSecond = new ByteArrayOutputStream();
-
-                                for(int j = 0; j < sizeItem; j++) {
-
-                                    if(item[j] == '|' || j == sizeItem - 1) {
-                                        m_listMessage.add(fillerSecond);
-                                        fillerSecond = new ByteArrayOutputStream();
-                                    } else
-                                        fillerSecond.write(item[j]);
-                                }
-                            }
-
-                        } else
-                            fillerFerst.write(answerArray[i]);
+                if(sizeArray != 0) {
+                    ArrayList<ArrayList<ByteArrayOutputStream>> parse = CClient.Parse(answerArray, sizeArray, (byte) 0x4C);
+                    if (!parse.isEmpty()) {
+                        for (ArrayList<ByteArrayOutputStream> p : parse) {
+                            ((CRecyclerAdapter) m_recyclerViewList.getAdapter()).onItemArray(p);
+                        }
                     }
-                }
-
-                if(m_listMessage.size() > 0) {
-                    ((CRecyclerAdapter) m_recyclerViewList.getAdapter()).onItemArray(m_listMessage);
-                    m_listMessage.clear();
                 }
 
                 int size = m_recyclerViewList.getAdapter().getItemCount();
@@ -131,30 +95,6 @@ public class CListFragment extends Fragment {
                     m_textPlugList.setText("Нет результатов");
                     m_recyclerViewList.setVisibility(View.INVISIBLE);
                 }
-
-                //answer = CClient.GetBuffer();
-                /*if(!answer.isEmpty()) {
-                    ((CRecyclerAdapter) m_recyclerViewList.getAdapter()).onClear();
-                    StringTokenizer list = new StringTokenizer(answer, "#");
-                    while (list.hasMoreTokens()) {
-                        StringTokenizer item = new StringTokenizer(list.nextToken(), "|");
-                        while (item.hasMoreTokens()) {
-                            String str = item.nextToken();
-                            if(str.equals("L")) {
-                                str = item.nextToken();
-                                if(!str.equals("0"))
-                                    return;
-                                else
-                                    break;
-                            }
-                            array.add(str);
-                        }
-                        if(!array.isEmpty()) {
-                            ((CRecyclerAdapter) m_recyclerViewList.getAdapter()).onItemAdd(array);
-                            array.clear();
-                        }
-                    }
-                }*/
             }
         }
     }

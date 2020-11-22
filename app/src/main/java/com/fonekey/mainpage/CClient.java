@@ -12,8 +12,12 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class CClient extends Thread {
+
+    private static final int SIZE_BUFF = 64000;
 
     private static Socket m_socket;
     private static final int SERVERPORT = 3500;
@@ -21,8 +25,6 @@ public class CClient extends Thread {
 
     private static String m_buffer = "";
 
-    private static byte[] m_bufferArray = new byte[64000];
-    private static int m_sizeBufferArray = 0;
     private static ByteArrayOutputStream m_bufferArrayStream;
 
     CClient() {
@@ -83,22 +85,15 @@ public class CClient extends Thread {
                 try {
                     InputStream stream = m_socket.getInputStream();
                     m_bufferArrayStream = new ByteArrayOutputStream();
-                    //m_sizeBufferArray = stream.read(m_bufferArray);
 
                     int sizeRead = 0;
+                    int sizeCount = 0;
                     byte[] buffer = new byte[1460];
 
-                    //while ((sizeRead = stream.read(buffer)) != -1) {
-                    while (m_sizeBufferArray < 64000) {
+                    while (sizeCount < SIZE_BUFF) {
                         sizeRead = stream.read(buffer);
                         m_bufferArrayStream.write(buffer, 0, sizeRead);
-                        m_sizeBufferArray += sizeRead;
-                    }
-
-                    m_bufferArray = m_bufferArrayStream.toByteArray();
-
-                    if(m_bufferArray.length != m_sizeBufferArray) {
-                        int t = 12;
+                        sizeCount += sizeRead;
                     }
 
                 } catch (UnknownHostException e) {
@@ -154,7 +149,6 @@ public class CClient extends Thread {
 
     public static int ReadData() {
 
-        //Thread thrRead = new Thread(new CClient.ReadThread());
         Thread thrRead = new Thread(new CClient.ReadThreadArray());
         thrRead.start();
         try {
@@ -172,10 +166,73 @@ public class CClient extends Thread {
     }
 
     public static byte[] GetBufferArray() {
-        return m_bufferArray;
+        return m_bufferArrayStream.toByteArray();
     }
 
-    public static int GetSizeBufferArray() {
-        return m_sizeBufferArray;
+    public static ArrayList<ArrayList<ByteArrayOutputStream>> Parse(byte[] mesasge, int sizeMesasge, byte command)
+    {
+        ArrayList<ArrayList<ByteArrayOutputStream>> parse_mesasge = new ArrayList<>();
+        ByteArrayOutputStream temp = new ByteArrayOutputStream();
+
+        //  Защита от мусора
+        int startPosition = -1;
+        for(int i = 2; i < sizeMesasge; i++) {
+            if(mesasge[i - 2] == (byte) 0xFA && mesasge[i - 1] == (byte) 0xFB && mesasge[i] == command) {
+                startPosition = i + 1;
+                break;
+            }
+        }
+        if(startPosition == -1)
+            return parse_mesasge;
+
+        for(int position = startPosition; position < sizeMesasge; position++) {
+
+            if(mesasge[position] == (byte) 0xFA && mesasge[position + 1] == (byte) 0xFB) {
+
+                switch(mesasge[position + 2]) {
+
+                    case (byte) 0x22 : {
+                        position += 2;
+                        if(temp.toByteArray()[0] == '0') {
+                            temp.reset();
+                            break;
+                        } else
+                            return parse_mesasge;
+                    }
+
+                    case (byte) 0x45 : {
+                        position += 2;
+
+                        int size = (temp.toByteArray()[0] << 8) | temp.toByteArray()[1];
+                        if(size <= 64000) {
+                            temp.reset();
+                            break;
+                        } else
+                            return parse_mesasge;
+                    }
+
+                    case (byte) 0x78: {
+                        position += 2;
+                        parse_mesasge.add(new ArrayList<ByteArrayOutputStream>());
+                        temp.reset();
+                        break;
+                    }
+
+                    case (byte) 0x60: {
+                        position += 2;
+                        parse_mesasge.get(parse_mesasge.size() - 1).add(temp);
+                        temp = new ByteArrayOutputStream();
+                        break;
+                    }
+
+                    case (byte) 0xFF: {
+                        parse_mesasge.get(parse_mesasge.size() - 1).add(temp);
+                        return parse_mesasge;
+                    }
+                }
+            } else
+                temp.write(mesasge[position]);
+        }
+        return parse_mesasge;
     }
 }
