@@ -33,7 +33,6 @@ public class CClient extends Thread {
 
     static class ClientThread implements Runnable {
 
-
         @Override
         public void run() {
             try {

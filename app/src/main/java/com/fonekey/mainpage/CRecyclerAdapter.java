@@ -1,5 +1,6 @@
 package com.fonekey.mainpage;
 import com.fonekey.R;
+import com.fonekey.fermpage.CFermActivity;
 import com.fonekey.searchpage.CSearch;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,11 +10,14 @@ import android.widget.Button;
 import android.view.ViewGroup;
 import android.content.Intent;
 import android.content.Context;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.widget.ImageButton;
 import android.view.LayoutInflater;
 import android.graphics.BitmapFactory;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,14 +37,15 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         m_lstFerm = new ArrayList<>();
     }
 
+    @NotNull
     @Override
-    public CFermViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
+    public CFermViewHolder onCreateViewHolder(@NotNull ViewGroup viewGroup, int viewType)
     {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.ferm, viewGroup, false);
         return new CFermViewHolder(view);
     }
 
-    public static class CFermViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
+    public static class CFermViewHolder extends RecyclerView.ViewHolder
     {
         private final TextView m_street;
         private final TextView m_house;
@@ -53,9 +58,13 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
 
         private final Button m_btnPayDel;
 
+        private final LinearLayout m_layotFerm;
+
         public CFermViewHolder(View itemView)
         {
             super (itemView);
+
+            m_layotFerm = itemView.findViewById(R.id.layoutFerm);
 
             m_street = itemView.findViewById(R.id.txtStreet);
             m_house = itemView.findViewById(R.id.txtHouse);
@@ -77,11 +86,6 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
                 m_btnLike.setVisibility(View.INVISIBLE);
             }
         }
-
-        @Override
-        public void onClick(View v) {
-            int t = 21;
-        }
     }
 
     public void onItemDel(int position)
@@ -100,7 +104,7 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
             onItemDel(0);
     }
 
-    public void onItemAdd(ArrayList<String> data)
+    public void onItemAdd(@NotNull ArrayList<String> data)
     {
         int position = 0;
         CFerm ferm = new CFerm();
@@ -119,7 +123,7 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         // notifyItemRangeInserted(m_lstFerm.size() + 1, m_lstFerm.size());
     }
 
-    public void onItemArray(ArrayList<ByteArrayOutputStream> data) {
+    public void onItemArray(@NotNull ArrayList<ByteArrayOutputStream> data) {
         int position = 0;
         CFerm ferm = new CFerm();
         ferm.m_id = data.get(position++).toString();
@@ -141,7 +145,7 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
     }
 
     @Override
-    public void onBindViewHolder(CFermViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(@NotNull CFermViewHolder viewHolder, final int position) {
         viewHolder.m_street.setText(m_lstFerm.get(position).m_street);
         viewHolder.m_house.setText(m_lstFerm.get(position).m_house);
         viewHolder.m_rating.setText(m_lstFerm.get(position).m_rating);
@@ -195,6 +199,14 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
                         }
                     }
                 }
+            }
+        });
+
+        viewHolder.m_layotFerm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(m_context, CViewFermActivity.class);
+                m_context.startActivity(intent);
             }
         });
     }

@@ -50,6 +50,7 @@ public class CListFragment extends Fragment {
     // Получения списка квартир
     private void GetListFerms() {
         m_textPlugList.setText(R.string.not_connection);
+        ((CRecyclerAdapter) m_recyclerViewList.getAdapter()).onClear();
         m_recyclerViewList.setVisibility(View.INVISIBLE);
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 

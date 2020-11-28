@@ -55,6 +55,11 @@
             android:name=".fermpage.CFermActivity"
             android:label="Добавление квартиры">
         </activity>
+
+        <activity
+            android:name=".mainpage.CViewFermActivity"
+            android:label="Просмотр квартиры">
+        </activity>
     </application>
 
 </manifest>
