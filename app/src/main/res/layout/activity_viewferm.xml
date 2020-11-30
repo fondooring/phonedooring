@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,71 +13,181 @@
         <ImageView
             android:id="@+id/imgMain"
             android:layout_width="match_parent"
-            android:layout_height="300dp"/>
+            android:layout_height="200dp"/>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/layoutImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/imgFerm0"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:scaleType="centerInside"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <ImageView
+                    android:id="@+id/imgFerm1"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:scaleType="centerInside"/>
+
+                <ImageView
+                    android:id="@+id/imgFerm2"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:scaleType="centerInside"/>
+
+                <ImageView
+                    android:id="@+id/imgFerm3"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:scaleType="centerInside"/>
+
+                <ImageView
+                    android:id="@+id/imgFerm4"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:scaleType="centerInside"/>
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
-            <ImageView
+            <TextView
+                android:id="@+id/txtTownView"
                 android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_weight="1"/>
-
-            <ImageView
+                android:layout_height="wrap_content"
+                android:text="Город"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/txtStreetView"
                 android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_weight="1"/>
-
-            <ImageView
+                android:layout_height="wrap_content"
+                android:text="улица"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/txtHouseView"
                 android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_weight="1"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_weight="1"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="100dp"
-                android:layout_weight="1"/>
+                android:layout_height="wrap_content"
+                android:text="дом"
+                android:textSize="20sp"/>
 
         </LinearLayout>
 
         <TextView
+            android:id="@+id/txtOwnerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Собственник"
+            android:textSize="20sp"
+            android:layout_gravity="center"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Адрес"
-            android:textSize="20sp"/>
+            android:orientation="horizontal"
+            android:gravity="center">
 
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Рейтинг"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/txtRatingView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5.5"
+                android:textSize="20sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Растояние до центра"
-            android:textSize="20sp"/>
+            android:orientation="horizontal"
+            android:gravity="center">
 
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Растояние до центра"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/txtDistanceView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="33"
+                android:textSize="20sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="км"
+                android:textSize="20sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Количесвто комнат"
-            android:textSize="20sp"/>
+            android:orientation="horizontal"
+            android:gravity="center">
 
-        <TextView
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Количесвто комнат"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/txtNumberRoomsView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:textSize="20sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Геопозиция"
-            android:textSize="20sp"/>
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Геопозиция"
+                android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/txtGeoView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="33.44 56.87"
+                android:textSize="20sp"/>
+
+        </LinearLayout>
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/txtDescriptionView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Описание"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:layout_gravity="center"/>
 
         <ListView
+            android:id="@+id/lstCommentsView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 

@@ -5,6 +5,7 @@ import com.fonekey.searchpage.CSearch;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.view.ViewGroup;
@@ -20,6 +21,9 @@ import android.graphics.BitmapFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -205,8 +209,94 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         viewHolder.m_layotFerm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(m_context, CViewFermActivity.class);
-                m_context.startActivity(intent);
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                try {
+                    buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x52});
+                    buffer.write("111".getBytes());
+                    buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x60});
+                    buffer.write(m_lstFerm.get(position).m_id.getBytes());
+                    buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0xFF});
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                int result = CClient.SendArray(buffer.toByteArray());
+                if(result == 0) {
+                    result = CClient.ReadData();
+                    if (result == 0) {
+
+                        byte[] answerArray = CClient.GetBufferArray();
+                        int sizeArray = answerArray.length;
+
+                        if (sizeArray != 0) {
+                            ArrayList<ArrayList<ByteArrayOutputStream>> parse = CClient.Parse(answerArray, sizeArray, (byte) 0x52);
+                            if (!parse.isEmpty()) {
+                                Intent intent = new Intent(m_context, CViewFermActivity.class);
+                                ArrayList<ByteArrayOutputStream> item = parse.get(0);
+                                sizeArray = item.size();
+                                int t_position = 0;
+
+                                intent.putExtra("town", m_lstFerm.get(position).m_town);
+
+                                intent.putExtra("street", m_lstFerm.get(position).m_street);
+                                intent.putExtra("house", m_lstFerm.get(position).m_house);
+
+                                if(t_position < sizeArray)
+                                    intent.putExtra("owner", item.get(t_position++).toString());
+                                else
+                                    return;
+
+                                intent.putExtra("rating", m_lstFerm.get(position).m_rating);
+                                intent.putExtra("distance", m_lstFerm.get(position).m_distance);
+                                intent.putExtra("number_rooms", m_lstFerm.get(position).m_number_rooms);
+
+                                if(t_position < sizeArray)
+                                    intent.putExtra("geo", item.get(t_position++).toString());
+                                else
+                                    return;
+                                if(t_position < sizeArray)
+                                    intent.putExtra("description", item.get(t_position++).toString());
+                                else
+                                    return;
+
+                                intent.putExtra("foto_0", m_lstFerm.get(position).m_foto);
+
+                                if(t_position < sizeArray)
+                                    intent.putExtra("foto_1", item.get(t_position++).toByteArray());
+                                else
+                                    return;
+
+                                if(t_position < sizeArray)
+                                    intent.putExtra("foto_2", item.get(t_position++).toByteArray());
+                                else
+                                    return;
+
+                                if(t_position < sizeArray)
+                                    intent.putExtra("foto_3", item.get(t_position++).toByteArray());
+                                else
+                                    return;
+
+                                if(t_position < sizeArray)
+                                    intent.putExtra("foto_4", item.get(t_position++).toByteArray());
+                                else
+                                    return;
+
+                                int number_comments = Integer.parseInt(item.get(t_position++).toString());
+                                //int number_comments =  ByteBuffer.wrap(item.get(t_position++).toByteArray()).getShort();
+                                intent.putExtra("number_comments", number_comments);
+                                for(int i = 0; i < number_comments; i++) {
+                                    if(t_position < sizeArray)
+                                        intent.putExtra("comments_" + i, item.get(t_position++).toByteArray());
+                                    else
+                                        return;
+                                }
+
+                                if(t_position == sizeArray)
+                                    m_context.startActivity(intent);
+                            }
+                        }
+                    }
+                }
             }
         });
     }

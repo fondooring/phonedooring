@@ -20,7 +20,7 @@ public class CClient extends Thread {
     private static final int SIZE_BUFF = 64000;
 
     private static Socket m_socket;
-    private static final int SERVERPORT = 3500;
+    private static final int SERVERPORT = 4000;
     private static final String SERVER_IP = "192.168.1.66";
 
     private static String m_buffer = "";
@@ -131,8 +131,9 @@ public class CClient extends Thread {
         if(m_socket != null) {
             try {
                 DataOutputStream dos = new DataOutputStream(m_socket.getOutputStream());
-                dos.writeInt(message.length);
-                dos.write(message,0,message.length);
+                dos.writeInt(message.length + 3);
+                dos.write(message,0, message.length);
+                dos.flush();
                 result = 0;
             } catch (UnknownHostException e) {
                 e.printStackTrace();
