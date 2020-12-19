@@ -71,7 +71,9 @@ public class CListFragment extends Fragment {
             e.printStackTrace();
         }
 
-        int result = CClient.SendArray(buffer.toByteArray());
+        CClient.SetBufferArray(buffer.toByteArray());
+        // int result = CClient.SendArray(buffer.toByteArray());
+        int result = CClient.SendData2();
         if(result == 0) {
             result = CClient.ReadData();
             if(result == 0) {

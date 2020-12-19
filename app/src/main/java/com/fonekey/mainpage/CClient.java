@@ -1,5 +1,7 @@
 package com.fonekey.mainpage;
 
+import com.fonekey.searchpage.CSearch;
+
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.Socket;
@@ -36,6 +38,7 @@ public class CClient extends Thread {
         @Override
         public void run() {
             try {
+                m_bufferArrayStream = new ByteArrayOutputStream();
                 InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
                 m_socket = new Socket(serverAddr, SERVERPORT);
                 m_socket.setSoTimeout(2000);
@@ -65,6 +68,13 @@ public class CClient extends Thread {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    static class SendThreadArray implements Runnable {
+        @Override
+        public void run() {
+            SendArray2();
         }
     }
 
@@ -126,13 +136,13 @@ public class CClient extends Thread {
     }
 
     public static int SendArray(byte[] message) {
-        int result = 1;
+            int result = 1;
 
         if(m_socket != null) {
             try {
                 DataOutputStream dos = new DataOutputStream(m_socket.getOutputStream());
-                dos.writeInt(message.length + 3);
-                dos.write(message,0, message.length);
+                dos.writeInt(m_bufferArrayStream.toByteArray().length + 3);
+                dos.write(m_bufferArrayStream.toByteArray(),0, m_bufferArrayStream.toByteArray().length);
                 dos.flush();
                 result = 0;
             } catch (UnknownHostException e) {
@@ -145,6 +155,42 @@ public class CClient extends Thread {
         }
 
         return result;
+    }
+
+    public static int SendArray2() {
+        int result = 1;
+
+        if(m_socket != null) {
+            try {
+                DataOutputStream dos = new DataOutputStream(m_socket.getOutputStream());
+                dos.writeInt(m_bufferArrayStream.toByteArray().length + 3);
+                dos.write(m_bufferArrayStream.toByteArray(),0, m_bufferArrayStream.toByteArray().length);
+                dos.flush();
+                result = 0;
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return result;
+    }
+
+    public static int SendData2() {
+
+        Thread thrSend = new Thread(new CClient.SendThreadArray());
+        thrSend.start();
+        try {
+            thrSend.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return 1;
+        }
+
+        return 0;
     }
 
     public static int ReadData() {
@@ -167,6 +213,16 @@ public class CClient extends Thread {
 
     public static byte[] GetBufferArray() {
         return m_bufferArrayStream.toByteArray();
+    }
+
+    public static void SetBufferArray(byte[] buffer) {
+
+        try {
+            m_bufferArrayStream.write(buffer);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static ArrayList<ArrayList<ByteArrayOutputStream>> Parse(byte[] mesasge, int sizeMesasge, byte command)

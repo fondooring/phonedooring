@@ -32,8 +32,8 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
-    implementation 'androidx.navigation:navigation-runtime:2.3.1'
-    implementation 'androidx.navigation:navigation-ui:2.3.1'
+    implementation 'androidx.navigation:navigation-runtime:2.3.2'
+    implementation 'androidx.navigation:navigation-ui:2.3.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
@@ -42,12 +42,12 @@ dependencies {
     def nav_version = "2.3.0"
 
     // Java language implementation
-    implementation "androidx.navigation:navigation-fragment:2.3.1"
-    implementation "androidx.navigation:navigation-ui:2.3.1"
+    implementation "androidx.navigation:navigation-fragment:2.3.2"
+    implementation "androidx.navigation:navigation-ui:2.3.2"
 
     // Feature module Support
-    implementation "androidx.navigation:navigation-dynamic-features-fragment:2.3.1"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:2.3.2"
 
     // Testing Navigation
-    androidTestImplementation "androidx.navigation:navigation-testing:2.3.1"
+    androidTestImplementation "androidx.navigation:navigation-testing:2.3.2"
 }

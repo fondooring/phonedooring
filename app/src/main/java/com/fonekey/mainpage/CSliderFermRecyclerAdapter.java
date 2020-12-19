@@ -10,6 +10,9 @@ import android.widget.TextView;
 import android.content.Context;
 import android.view.LayoutInflater;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -58,13 +61,12 @@ public class CSliderFermRecyclerAdapter extends RecyclerView.Adapter<CSliderFerm
             onItemDel(0);
     }
 
-    public void onItemAdd(List<String> data)
+    public void onItemAdd(@NotNull ArrayList<ByteArrayOutputStream> data)
     {
-        int position = 0;
         CFermSlider fermSlider = new CFermSlider();
-        fermSlider.m_fermId = data.get(position++);
-        fermSlider.m_dataBegin = data.get(position++);
-        fermSlider.m_dataEnd = data.get(position++);
+        fermSlider.m_fermId = data.get(1).toString();
+        fermSlider.m_dataBegin = "1.1.2020";
+        fermSlider.m_dataEnd = "31.12.2020";
         fermSlider.m_enable = false;
 
         m_lstFerm.add(0, fermSlider);

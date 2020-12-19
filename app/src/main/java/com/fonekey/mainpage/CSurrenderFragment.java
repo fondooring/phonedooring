@@ -14,8 +14,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.view.LayoutInflater;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 
 public class CSurrenderFragment extends Fragment {
 
@@ -46,44 +47,42 @@ public class CSurrenderFragment extends Fragment {
         m_textPlugSurrender.setText(R.string.not_connection);
         m_recyclerViewSurrender.setVisibility(View.INVISIBLE);
 
-        String answer = "";
-        ArrayList<String> array = new ArrayList<>();
-        ArrayList<String> message = new ArrayList<>();
-        message.add("K");
-        message.add(CMainActivity.m_userId + "|");
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try {
+            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x4B});
+            buffer.write(CMainActivity.m_userId.getBytes());
+            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0xFF});
 
-        String str = message.toString();
-        int result = CClient.SendData(str.substring(1, str.length() - 1).replace(", ", "|"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        CClient.SetBufferArray(buffer.toByteArray());
+        int result = CClient.SendData2();
         if(result == 0) {
             result = CClient.ReadData();
             if(result == 0) {
-                answer = CClient.GetBuffer();
-                if(!answer.isEmpty()) {
-                    ((CSliderFermRecyclerAdapter) m_recyclerViewSurrender.getAdapter()).onClear();
-                    StringTokenizer list = new StringTokenizer(answer, "#");
-                    while (list.hasMoreTokens()) {
-                        StringTokenizer item = new StringTokenizer(list.nextToken(), "|");
-                        while (item.hasMoreTokens()) {
-                            str = item.nextToken();
-                            if(str.equals("K"))
-                                continue;
-                            array.add(str);
-                        }
-                        if(!array.isEmpty()) {
-                            ((CSliderFermRecyclerAdapter) m_recyclerViewSurrender.getAdapter()).onItemAdd(array);
-                            array.clear();
-                        }
-                    }
+                byte[] answerArray = CClient.GetBufferArray();
+                int sizeArray = answerArray.length;
 
-                    int size = m_recyclerViewSurrender.getAdapter().getItemCount();
-                    if(size > 0) {
-                        m_textPlugSurrender.setText("");
-                        m_recyclerViewSurrender.setVisibility(View.VISIBLE);
-                    } else {
-                        m_textPlugSurrender.setText("У вас нет арендованных квартир");
-                        m_recyclerViewSurrender.setVisibility(View.INVISIBLE);
+                if(sizeArray != 0) {
+                    ArrayList<ArrayList<ByteArrayOutputStream>> parse = CClient.Parse(answerArray, sizeArray, (byte) 0x4B);
+                    if (!parse.isEmpty()) {
+                        for (ArrayList<ByteArrayOutputStream> p : parse) {
+                            ((CSliderFermRecyclerAdapter) m_recyclerViewSurrender.getAdapter()).onItemAdd(p);
+                        }
                     }
                 }
+
+                int size = m_recyclerViewSurrender.getAdapter().getItemCount();
+                if(size > 0) {
+                    m_textPlugSurrender.setText("");
+                    m_recyclerViewSurrender.setVisibility(View.VISIBLE);
+                } else {
+                    m_textPlugSurrender.setText("У вас нет арендованных квартир");
+                    m_recyclerViewSurrender.setVisibility(View.INVISIBLE);
+                }
+
             }
         }
     }
