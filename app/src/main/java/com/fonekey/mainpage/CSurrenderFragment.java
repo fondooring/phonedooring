@@ -14,9 +14,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.view.LayoutInflater;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.io.ByteArrayOutputStream;
 
 public class CSurrenderFragment extends Fragment {
 
@@ -42,48 +42,55 @@ public class CSurrenderFragment extends Fragment {
         return view;
     }
 
-    // Получения списка квартир
+    // Получения списка ключей
     private void GetListFerms() {
         m_textPlugSurrender.setText(R.string.not_connection);
         m_recyclerViewSurrender.setVisibility(View.INVISIBLE);
 
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        try {
-            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x4B});
-            buffer.write(CMainActivity.m_userId.getBytes());
-            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0xFF});
+        ArrayList<byte[]> data = new ArrayList<>();
+        data.add(CMainActivity.m_userId.getBytes());
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ByteArrayOutputStream message = CClient.CreateMessage(data, (byte)0x4B); // "K"
+        ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte)0x4B);
+        if(answer != null) {
+            try {
+                if (!answer.isEmpty()) {
+                    Iterator<ArrayList<ByteArrayOutputStream>> itr = answer.iterator();
+                    int countFerm = 0;
+                    int numberFerm = 0;
+                    while(itr.hasNext()) {
+                        ArrayList<ByteArrayOutputStream> listValue = itr.next();
+                        if(listValue.size() == 2) {
+                            if(listValue.get(0).toByteArray()[0] != '0')
+                                throw new CException("Ошибка сервера");
 
-        CClient.SetBufferArray(buffer.toByteArray());
-        int result = CClient.SendData2();
-        if(result == 0) {
-            result = CClient.ReadData();
-            if(result == 0) {
-                byte[] answerArray = CClient.GetBufferArray();
-                int sizeArray = answerArray.length;
-
-                if(sizeArray != 0) {
-                    ArrayList<ArrayList<ByteArrayOutputStream>> parse = CClient.Parse(answerArray, sizeArray, (byte) 0x4B);
-                    if (!parse.isEmpty()) {
-                        for (ArrayList<ByteArrayOutputStream> p : parse) {
-                            ((CSliderFermRecyclerAdapter) m_recyclerViewSurrender.getAdapter()).onItemAdd(p);
+                            numberFerm = Integer.parseInt(listValue.get(1).toString());
+                            if(numberFerm == 0) {
+                                m_textPlugSurrender.setText("У вас нет ключей от квартир");
+                                return;
+                            }
+                        } else {
+                            if (listValue.size() == 4) {
+                                ((CSliderFermRecyclerAdapter) m_recyclerViewSurrender.getAdapter()).onItemAdd(listValue);
+                                countFerm++;
+                            } else
+                                throw new CException("Ошибка парсера");
                         }
                     }
-                }
 
-                int size = m_recyclerViewSurrender.getAdapter().getItemCount();
-                if(size > 0) {
-                    m_textPlugSurrender.setText("");
+                    if(countFerm != numberFerm)
+                        throw new CException("Ошибка парсера");
+
                     m_recyclerViewSurrender.setVisibility(View.VISIBLE);
-                } else {
-                    m_textPlugSurrender.setText("У вас нет арендованных квартир");
-                    m_recyclerViewSurrender.setVisibility(View.INVISIBLE);
-                }
+                    m_textPlugSurrender.setText("");
 
+                } else {
+                    throw new CException("Ошибка парсера");
+                }
+            } catch (CException error) {
+                m_textPlugSurrender.setText(error.getMessage());
             }
+
         }
     }
 

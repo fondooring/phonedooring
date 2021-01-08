@@ -1,13 +1,15 @@
 package com.fonekey.fermpage;
 import com.fonekey.R;
+import com.fonekey.mainpage.CClient;
 import com.fonekey.mainpage.CMainActivity;
 
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -25,8 +27,6 @@ import java.io.FileNotFoundException;
 
 public class CFermActivity extends AppCompatActivity {
 
-    static final int GALLERY_REQUEST = 1;
-
     TextView m_owner;
     TextView m_town;
     TextView m_streetSave;
@@ -43,6 +43,9 @@ public class CFermActivity extends AppCompatActivity {
     ByteArrayOutputStream m_buffer;
     ArrayList<ByteArrayOutputStream> m_bufferFoto;
 
+    byte[] m_setImg = new byte[5];
+    int m_idImg = 0;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +56,19 @@ public class CFermActivity extends AppCompatActivity {
         m_buffer = new ByteArrayOutputStream();
 
         Button btnSave = findViewById(R.id.btnSaveFerm);
-        ImageButton btnLoadFoto = findViewById(R.id.btnPhotoSave);
+
+        final ArrayList<ImageButton> arrayImgBtn = new ArrayList<>();
+        arrayImgBtn.add((ImageButton)findViewById(R.id.imgBtnSaveFerm0));
+        arrayImgBtn.add((ImageButton)findViewById(R.id.imgBtnSaveFerm1));
+        arrayImgBtn.add((ImageButton)findViewById(R.id.imgBtnSaveFerm2));
+        arrayImgBtn.add((ImageButton)findViewById(R.id.imgBtnSaveFerm3));
+        arrayImgBtn.add((ImageButton)findViewById(R.id.imgBtnSaveFerm4));
+
+        for(ImageButton p : arrayImgBtn) {
+            p.setOnClickListener(SetImageInGallery);
+            p.setVisibility(View.INVISIBLE);
+        }
+        arrayImgBtn.get(0).setVisibility(View.VISIBLE);
 
         m_owner = findViewById(R.id.txtOwner);
         m_town = findViewById(R.id.txtTown);
@@ -84,96 +99,130 @@ public class CFermActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Random random = new Random();
-                try {
-                    m_buffer.write("S|U|".getBytes());
-                    m_buffer.write(CMainActivity.m_userId.getBytes());
-                    m_buffer.write("|T|".getBytes());
-                    m_buffer.write("111".getBytes());
-                    m_buffer.write("|P|".getBytes());
-                    m_buffer.write(m_numberPersonSave.getText().toString().getBytes());
-                    m_buffer.write("|L|".getBytes());
-                    m_buffer.write(m_streetSave.getText().toString().getBytes());
-                    m_buffer.write("|".getBytes());
-                    m_buffer.write(m_houseSave.getText().toString().getBytes());
-                    m_buffer.write("|".getBytes());
-                    m_buffer.write((random.nextInt(10) + "." + random.nextInt(10)).getBytes());
-                    m_buffer.write("|".getBytes());
-                    m_buffer.write(m_distanceSave.getText().toString().getBytes());
-                    m_buffer.write("|".getBytes());
-                    m_buffer.write(m_numberRoomsSave.getText().toString().getBytes());
-                    m_buffer.write("|".getBytes());
-                    m_buffer.write(m_priceSave.getText().toString().getBytes());
-                    m_buffer.write("|R|".getBytes());
-                    m_buffer.write(m_owner.getText().toString().getBytes());
-                    m_buffer.write("|".getBytes());
-                    m_buffer.write(m_geo.getText().toString().getBytes());
-                    m_buffer.write("|".getBytes());
-                    m_buffer.write(m_description.getText().toString().getBytes());
-                    m_buffer.write("|I|".getBytes());
-                    m_buffer.write(m_ipHouse.getText().toString().getBytes());
-                    m_buffer.write("|F|".getBytes());
-                    m_buffer.write(String.valueOf(m_bufferFoto.size()).getBytes());
-                    m_buffer.write("|".getBytes());
-                    for(ByteArrayOutputStream p : m_bufferFoto) {
-                        m_buffer.write(p.toByteArray());
-                        m_buffer.write(0xAA);
-                        m_buffer.write(0xBB);
-                        m_buffer.write("|".getBytes());
-                    }
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                ArrayList<byte[]> data = new ArrayList<>();
+                data.add(CMainActivity.m_userId.getBytes());
+                data.add("111".getBytes());
+                data.add(m_numberPersonSave.getText().toString().getBytes());
+                data.add(m_streetSave.getText().toString().getBytes());
+                data.add(m_houseSave.getText().toString().getBytes());
+                data.add((random.nextInt(10) + "." + random.nextInt(10)).getBytes());
+                data.add(m_distanceSave.getText().toString().getBytes());
+                data.add(m_numberRoomsSave.getText().toString().getBytes());
+                data.add(m_priceSave.getText().toString().getBytes());
+                data.add(m_owner.getText().toString().getBytes());
+                data.add(m_geo.getText().toString().getBytes());
+                data.add(m_description.getText().toString().getBytes());
+                data.add(m_ipHouse.getText().toString().getBytes());
+
+                ArrayList<byte[]> arrayBytePhoto = new ArrayList<>();
+                int i = 0;
+                for(ImageButton p : arrayImgBtn) {
+                    if(m_setImg[i++] == 1) {
+                        ByteArrayOutputStream temp = new ByteArrayOutputStream();
+                        Bitmap bitmap = ((BitmapDrawable) p.getDrawable()).getBitmap();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, temp);
+                        arrayBytePhoto.add(temp.toByteArray());
+                    }
                 }
 
+                data.add(new byte[]{ (byte)arrayBytePhoto.size() });
+                data.addAll(arrayBytePhoto);
+
+                ByteArrayOutputStream message = CClient.CreateMessage(data, (byte)0x53); // "S"
                 Intent intent = new Intent();
-                intent.putExtra("message", m_buffer.toByteArray());
+                intent.putExtra("message", message.toByteArray());
                 setResult(1889, intent);
                 finish();
             }
         });
-
-        btnLoadFoto.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-                photoPickerIntent.setType("image/*");
-                startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
-            }
-        });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    OnClickListener SetImageInGallery = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            int index = -1;
+            m_idImg = v.getId();
+            switch (m_idImg) {
+                case (int)R.id.imgBtnSaveFerm0:
+                    index = 0;
+                    break;
+                case (int)R.id.imgBtnSaveFerm1:
+                    index = 1;
+                    break;
+                case (int)R.id.imgBtnSaveFerm2:
+                    index = 2;
+                    break;
+                case (int)R.id.imgBtnSaveFerm3:
+                    index = 3;
+                    break;
+                case (int)R.id.imgBtnSaveFerm4:
+                    index = 4;
+                    break;
+                default:
+            }
+
+            if(index != -1) {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, index); // GALLERY_REQUEST
+            }
+        }
+    };
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent); // requestCode == GALLERY_REQUEST
 
-        switch(requestCode) {
-            case GALLERY_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    Uri uri = imageReturnedIntent.getData();
-                    if (uri != null) {
-                        try {
-                            InputStream inputStream = getContentResolver().openInputStream(uri);
-                            if(inputStream != null) {
+        int visible = View.INVISIBLE;
+        byte established = 0;
 
-                                int len = 0;
-                                byte[] buffer = new byte[1024];
-                                ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        if(resultCode == RESULT_OK) {
+            Uri uri = imageReturnedIntent.getData();
+            if (uri != null) {
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(uri);
+                    if(inputStream != null) {
 
-                                while ((len = inputStream.read(buffer)) != -1)
-                                    byteBuffer.write(buffer, 0, len);
+                        int len = 0;
+                        byte[] buffer = new byte[1024];
+                        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
 
-                                m_bufferFoto.add(byteBuffer);
-                            }
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
-                        }
+                        while((len = inputStream.read(buffer)) != -1)
+                            byteBuffer.write(buffer, 0, len);
+
+                        ImageButton img = findViewById(m_idImg);
+                        img.setImageBitmap(BitmapFactory.decodeByteArray(byteBuffer.toByteArray(), 0, byteBuffer.size()));
+
+                        visible = View.VISIBLE;
+                        established = 1;
                     }
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
                 }
+            }
+        } else
+            ((ImageButton)findViewById(m_idImg)).setImageResource(R.mipmap.baseline_add_black_48);
+
+        m_setImg[requestCode] = established;
+
+        switch(m_idImg) {
+            case (int)R.id.imgBtnSaveFerm0:
+                findViewById(R.id.imgBtnSaveFerm1).setVisibility(visible);
+                break;
+            case (int)R.id.imgBtnSaveFerm1:
+                findViewById(R.id.imgBtnSaveFerm2).setVisibility(visible);
+                break;
+            case (int)R.id.imgBtnSaveFerm2:
+                findViewById(R.id.imgBtnSaveFerm3).setVisibility(visible);
+                break;
+            case (int)R.id.imgBtnSaveFerm3:
+                findViewById(R.id.imgBtnSaveFerm4).setVisibility(visible);
+                break;
         }
     }
 }

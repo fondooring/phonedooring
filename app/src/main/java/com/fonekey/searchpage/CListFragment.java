@@ -19,9 +19,8 @@ import android.view.LayoutInflater;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
 
 public class CListFragment extends Fragment {
 
@@ -52,53 +51,30 @@ public class CListFragment extends Fragment {
         m_textPlugList.setText(R.string.not_connection);
         ((CRecyclerAdapter) m_recyclerViewList.getAdapter()).onClear();
         m_recyclerViewList.setVisibility(View.INVISIBLE);
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-        try {
-            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x4C});
-            buffer.write("111".getBytes());
-            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x60});
-            buffer.write(CSearch.number_person.getBytes());
-            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x60});
-            //buffer.write(CSearch.date_begin.getBytes());
-            buffer.write("20-10-2020 12:00:00".getBytes());
-            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x60});
-            //buffer.write(CSearch.date_end.getBytes());
-            buffer.write("20-10-2020 12:00:01".getBytes());
-            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0xFF});
+        ArrayList<byte[]> data = new ArrayList<>();
+        data.add("111".getBytes());
+        data.add(CSearch.number_person.getBytes());
+        //buffer.write(CSearch.date_begin.getBytes());
+        data.add("20-10-2020 12:00:00".getBytes());
+        //buffer.write(CSearch.date_end.getBytes());
+        data.add("20-10-2020 12:00:01".getBytes());
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        ByteArrayOutputStream message = CClient.CreateMessage(data, (byte)0x4C); // "L"
+        ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte) 0x4C);
+        if(answer != null && !answer.isEmpty()) {
+            for (ArrayList<ByteArrayOutputStream> p : answer) {
+                ((CRecyclerAdapter) m_recyclerViewList.getAdapter()).onItemArray(p);
+            }
         }
 
-        CClient.SetBufferArray(buffer.toByteArray());
-        // int result = CClient.SendArray(buffer.toByteArray());
-        int result = CClient.SendData2();
-        if(result == 0) {
-            result = CClient.ReadData();
-            if(result == 0) {
-
-                byte[] answerArray = CClient.GetBufferArray();
-                int sizeArray = answerArray.length;
-
-                if(sizeArray != 0) {
-                    ArrayList<ArrayList<ByteArrayOutputStream>> parse = CClient.Parse(answerArray, sizeArray, (byte) 0x4C);
-                    if (!parse.isEmpty()) {
-                        for (ArrayList<ByteArrayOutputStream> p : parse) {
-                            ((CRecyclerAdapter) m_recyclerViewList.getAdapter()).onItemArray(p);
-                        }
-                    }
-                }
-
-                int size = m_recyclerViewList.getAdapter().getItemCount();
-                if(size > 0) {
-                    m_textPlugList.setText("");
-                    m_recyclerViewList.setVisibility(View.VISIBLE);
-                } else {
-                    m_textPlugList.setText("Нет результатов");
-                    m_recyclerViewList.setVisibility(View.INVISIBLE);
-                }
-            }
+        int size = m_recyclerViewList.getAdapter().getItemCount();
+        if(size > 0) {
+            m_textPlugList.setText("");
+            m_recyclerViewList.setVisibility(View.VISIBLE);
+        } else {
+            m_textPlugList.setText("Нет результатов");
+            m_recyclerViewList.setVisibility(View.INVISIBLE);
         }
     }
 

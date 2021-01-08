@@ -76,22 +76,58 @@
             android:layout_height="wrap_content"
             android:hint="Описание"/>
 
-        <ImageButton
-            android:id="@+id/btnPhotoSave"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="#E0FFFF"/>
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/layoutImageViewSave"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+                <ImageButton
+                    android:id="@+id/imgBtnSaveFerm0"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@mipmap/baseline_add_black_48"
+                    android:background="#FFFFFF"/>
+
+                <ImageButton
+                    android:id="@+id/imgBtnSaveFerm1"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@mipmap/baseline_add_black_48"
+                    android:background="#FFFFFF"/>
+
+                <ImageButton
+                    android:id="@+id/imgBtnSaveFerm2"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@mipmap/baseline_add_black_48"
+                    android:background="#FFFFFF"/>
+
+                <ImageButton
+                    android:id="@+id/imgBtnSaveFerm3"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@mipmap/baseline_add_black_48"
+                    android:background="#FFFFFF"/>
+
+                <ImageButton
+                    android:id="@+id/imgBtnSaveFerm4"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@mipmap/baseline_add_black_48"
+                    android:background="#FFFFFF"/>
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <Button
             android:id="@+id/btnSaveFerm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/save"/>
-
-        <com.fonekey.mainpage.CCalendarViewScrollable
-            android:id="@+id/calendarView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
     </GridLayout>
 </ScrollView>

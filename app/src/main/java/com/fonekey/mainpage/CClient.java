@@ -1,84 +1,55 @@
 package com.fonekey.mainpage;
 
-import com.fonekey.searchpage.CSearch;
-
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.net.Socket;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.ByteArrayOutputStream;
+
+import java.net.Socket;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
+
 import java.util.ArrayList;
 
 public class CClient extends Thread {
 
+    //private static int m_result;
+    private static Socket m_socket;
+
+    private static final String SERVER_IP = "192.168.1.66";
+    private static final int SERVERPORT = 4000;
     private static final int SIZE_BUFF = 64000;
 
-    private static Socket m_socket;
-    private static final int SERVERPORT = 4000;
-    private static final String SERVER_IP = "192.168.1.66";
-
-    private static String m_buffer = "";
+    //private static final int UNCNOWN_HOST_EXCEPTION = 2;
+    //private static final int IO_EXCEPTION = 1;
+    //private static final int SUCCESS = 0;
+    private static final int SEC_TIMEOUT = 2000;
 
     private static ByteArrayOutputStream m_bufferArrayStream;
 
-    CClient() {
-        new Thread(new ClientThread()).start();
-    }
-
-    static class ClientThread implements Runnable {
+    private static class ClientThreadInit implements Runnable {
 
         @Override
         public void run() {
             try {
                 m_bufferArrayStream = new ByteArrayOutputStream();
-                InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
-                m_socket = new Socket(serverAddr, SERVERPORT);
-                m_socket.setSoTimeout(2000);
 
+                m_socket = new Socket();
+                m_socket.setSoTimeout(SEC_TIMEOUT);
+                m_socket.connect(new InetSocketAddress(SERVER_IP, SERVERPORT), SEC_TIMEOUT);
+
+                // m_result = SUCCESS;
             } catch (UnknownHostException e1) {
                 e1.printStackTrace();
+                //m_result = UNCNOWN_HOST_EXCEPTION;
             } catch (IOException e1) {
                 e1.printStackTrace();
+                //m_result = IO_EXCEPTION;
             }
         }
     }
 
-    static class ReadThread implements Runnable {
-
-        @Override
-        public void run() {
-
-            m_buffer = "";
-            if(m_socket != null) {
-
-                try {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(m_socket.getInputStream(), "UTF-8"));
-                    m_buffer = in.readLine();
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    static class SendThreadArray implements Runnable {
-        @Override
-        public void run() {
-            SendArray2();
-        }
-    }
-
-    static class ReadThreadArray implements Runnable {
+    private static class ClientThreadRead implements Runnable {
 
         @Override
         public void run() {
@@ -93,7 +64,6 @@ public class CClient extends Thread {
 
                 try {
                     InputStream stream = m_socket.getInputStream();
-                    m_bufferArrayStream = new ByteArrayOutputStream();
 
                     int sizeRead = 0;
                     int sizeCount = 0;
@@ -105,128 +75,114 @@ public class CClient extends Thread {
                         sizeCount += sizeRead;
                     }
 
+                    //m_result = SUCCESS;
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                    //m_result = UNCNOWN_HOST_EXCEPTION;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    //m_result = IO_EXCEPTION;
+                }
+            }
+        }
+    }
+
+    private static class ClientThreadSend implements Runnable {
+
+        @Override
+        public void run() {
+
+            byte[] message = m_bufferArrayStream.toByteArray();
+            int size = message.length;
+
+            if(m_socket != null && size != 0) {
+                try {
+                    DataOutputStream dos = new DataOutputStream(m_socket.getOutputStream());
+                    dos.writeInt(size);
+                    dos.write(message,0, size);
+                    dos.flush();
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
     }
 
-    public static int SendData(String message) {
-
-        int result = 1;
-
-        if(m_socket != null) {
-            try {
-                PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(m_socket.getOutputStream())), true);
-                out.println(message);
-                result = 0;
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return result;
-    }
-
-    public static int SendArray(byte[] message) {
-            int result = 1;
-
-        if(m_socket != null) {
-            try {
-                DataOutputStream dos = new DataOutputStream(m_socket.getOutputStream());
-                dos.writeInt(m_bufferArrayStream.toByteArray().length + 3);
-                dos.write(m_bufferArrayStream.toByteArray(),0, m_bufferArrayStream.toByteArray().length);
-                dos.flush();
-                result = 0;
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return result;
-    }
-
-    public static int SendArray2() {
-        int result = 1;
-
-        if(m_socket != null) {
-            try {
-                DataOutputStream dos = new DataOutputStream(m_socket.getOutputStream());
-                dos.writeInt(m_bufferArrayStream.toByteArray().length + 3);
-                dos.write(m_bufferArrayStream.toByteArray(),0, m_bufferArrayStream.toByteArray().length);
-                dos.flush();
-                result = 0;
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return result;
-    }
-
-    public static int SendData2() {
-
-        Thread thrSend = new Thread(new CClient.SendThreadArray());
-        thrSend.start();
+    private static int StartThread(Thread thread) {
+        thread.start();
         try {
-            thrSend.join();
+            thread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
             return 1;
         }
-
         return 0;
     }
 
-    public static int ReadData() {
+    public CClient() {
+        StartThread(new Thread(new ClientThreadInit()));
+    }
 
-        Thread thrRead = new Thread(new CClient.ReadThreadArray());
-        thrRead.start();
+    public static ArrayList<ArrayList<ByteArrayOutputStream>> DataExchange(byte[] data, byte command)
+    {
+        m_bufferArrayStream.reset();
+        int result = Send(data);
+        if(result == 0) {
+            m_bufferArrayStream.reset();
+            byte[] receive = Read();
+            int size = receive.length;
+            if(size != 0)
+                return ParseMessage(receive, size, command);
+            else
+                return  null;
+        } else
+            return null;
+    }
+
+    public static ByteArrayOutputStream CreateMessage(ArrayList<byte[]> message, byte command) {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
         try {
-            thrRead.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return 1;
-        }
 
-        return 0;
-    }
+            buffer.write(new byte[]{ (byte) 0xFA, (byte) 0xFB, command });
 
-    public static String GetBuffer() {
-        return  m_buffer;
-    }
+            for(byte[] p : message) {
+                buffer.write(p);
+                buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x60});
+            }
 
-    public static byte[] GetBufferArray() {
-        return m_bufferArrayStream.toByteArray();
-    }
-
-    public static void SetBufferArray(byte[] buffer) {
-
-        try {
-            m_bufferArrayStream.write(buffer);
+            buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0xFF});
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return buffer;
     }
 
-    public static ArrayList<ArrayList<ByteArrayOutputStream>> Parse(byte[] mesasge, int sizeMesasge, byte command)
-    {
+    private static int Send(byte[] buffer) {
+
+        try {
+            m_bufferArrayStream.write(buffer);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 1;
+        }
+
+        return StartThread(new Thread(new ClientThreadSend()));
+    }
+
+    private static byte[] Read() {
+        StartThread(new Thread(new ClientThreadRead()));
+        return m_bufferArrayStream.toByteArray();
+    }
+
+    private static ArrayList<ArrayList<ByteArrayOutputStream>> ParseMessage(byte[] mesasge, int sizeMesasge, byte command) {
+
         ArrayList<ArrayList<ByteArrayOutputStream>> parse_mesasge = new ArrayList<>();
         ByteArrayOutputStream temp = new ByteArrayOutputStream();
 
@@ -282,9 +238,10 @@ public class CClient extends Thread {
                     }
 
                     case (byte) 0xFF: {
-                        parse_mesasge.get(parse_mesasge.size() - 1).add(temp);
                         return parse_mesasge;
                     }
+
+                    default:
                 }
             } else
                 temp.write(mesasge[position]);

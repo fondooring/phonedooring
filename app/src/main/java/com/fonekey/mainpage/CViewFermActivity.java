@@ -3,25 +3,16 @@ import com.fonekey.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.app.FragmentTransaction;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ImageSwitcher;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.content.Intent;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ImageView;
+import android.widget.ArrayAdapter;
+import android.graphics.BitmapFactory;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.ByteArrayOutputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class CViewFermActivity extends AppCompatActivity {
 
@@ -30,11 +21,9 @@ public class CViewFermActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewferm);
 
-        LinearLayout layoutImageView = findViewById(R.id.layoutImageView);
-
         final ImageView imgMain = findViewById(R.id.imgMain);
-        final ImageView imgFoto0 = findViewById(R.id.imgFerm0);
-        final ImageView imgFoto1 = findViewById(R.id.imgFerm1);
+        ImageView imgFoto0 = findViewById(R.id.imgFerm0);
+        ImageView imgFoto1 = findViewById(R.id.imgFerm1);
         ImageView imgFoto2 = findViewById(R.id.imgFerm2);
         ImageView imgFoto3 = findViewById(R.id.imgFerm3);
         ImageView imgFoto4 = findViewById(R.id.imgFerm4);

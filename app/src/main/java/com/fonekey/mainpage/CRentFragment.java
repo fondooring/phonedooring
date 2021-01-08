@@ -17,8 +17,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.view.LayoutInflater;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.Iterator;
 
 public class CRentFragment extends Fragment {
 
@@ -31,34 +32,27 @@ public class CRentFragment extends Fragment {
         if(data != null) {
             if(resultCode == 1889) {
                 m_textPlugRent.setText(R.string.not_connection);
+                m_recyclerViewRent.setVisibility(View.INVISIBLE);
+                CRecyclerAdapter adapter = (CRecyclerAdapter)m_recyclerViewRent.getAdapter();
+                if(adapter != null) {
+                    adapter.onClear();
 
-                String answer = "";
-                ArrayList<String> array = new ArrayList<>();
-                String str = data.getStringExtra("message");
-                byte[] ans = data.getByteArrayExtra("message");
-                int result = CClient.SendArray(ans);
-                if(result == 0) {
-                    result = CClient.ReadData();
-                    if(result == 0) {
-                        answer = CClient.GetBuffer();
-                        if(!answer.isEmpty()) {
-                            ((CRecyclerAdapter) m_recyclerViewRent.getAdapter()).onClear();
-                            StringTokenizer list = new StringTokenizer(answer, "#");
-                            while (list.hasMoreTokens()) {
-                                StringTokenizer item = new StringTokenizer(list.nextToken(), "|");
-                                while (item.hasMoreTokens()) {
-                                    str = item.nextToken();
-                                    if(str.equals("S"))
-                                        continue;
-                                    array.add(str);
-                                }
-                            }
-                            if(!array.isEmpty()) {
-                                if(str.equals("1"))
-                                    m_textPlugRent.setText("Квартира создана");
-                                else
-                                    m_textPlugRent.setText("Квартира не создана");
-                            }
+                    ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(data.getByteArrayExtra("message"), (byte)0x53);
+                    if(answer != null) {
+                        try {
+                            if(!answer.isEmpty()) {
+                                ArrayList<ByteArrayOutputStream> listValue = answer.get(0);
+                                if(listValue.size() == 1) {
+                                    if(listValue.get(0).toByteArray()[0] == '0')
+                                        throw new CException("Квартира создана.\nОбновите список");
+                                    else
+                                        throw new CException("Квартира не создана");
+                                } else
+                                    throw new CException("Ошибка парсера");
+                            } else
+                                throw new CException("Ошибка парсера");
+                        } catch (CException error) {
+                            m_textPlugRent.setText(error.getMessage());
                         }
                     }
                 }
@@ -98,44 +92,52 @@ public class CRentFragment extends Fragment {
     private void GetListFerms() {
         m_textPlugRent.setText(R.string.not_connection);
         m_recyclerViewRent.setVisibility(View.INVISIBLE);
+        CRecyclerAdapter adapter = (CRecyclerAdapter)m_recyclerViewRent.getAdapter();
+        if(adapter != null) {
+            adapter.onClear();
+            ArrayList<byte[]> data = new ArrayList<>();
+            data.add(CMainActivity.m_userId.getBytes());
+            data.add("111".getBytes());
 
-        String answer = "";
-        ArrayList<String> array = new ArrayList<>();
-        ArrayList<String> message = new ArrayList<>();
-        message.add("O");
-        message.add(CMainActivity.m_userId + "|");
+            ByteArrayOutputStream message = CClient.CreateMessage(data, (byte) 0x4F); // "O"
+            ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte) 0x4F);
+            if (answer != null) {
+                try {
+                    if (!answer.isEmpty()) {
+                        Iterator<ArrayList<ByteArrayOutputStream>> itr = answer.iterator();
+                        int countFerm = 0;
+                        int numberFerm = 0;
+                        while (itr.hasNext()) {
+                            ArrayList<ByteArrayOutputStream> listValue = itr.next();
+                            if (listValue.size() == 2) {
+                                if (listValue.get(0).toByteArray()[0] != '0')
+                                    throw new CException("Ошибка сервера");
 
-        String str = message.toString();
-        int result = CClient.SendData(str.substring(1, str.length() - 1).replace(", ", "|"));
-        if(result == 0) {
-            result = CClient.ReadData();
-            if(result == 0) {
-                answer = CClient.GetBuffer();
-                if(!answer.isEmpty()) {
-                    ((CRecyclerAdapter) m_recyclerViewRent.getAdapter()).onClear();
-                    StringTokenizer list = new StringTokenizer(answer, "#");
-                    while (list.hasMoreTokens()) {
-                        StringTokenizer item = new StringTokenizer(list.nextToken(), "|");
-                        while (item.hasMoreTokens()) {
-                            str = item.nextToken();
-                            if(str.equals("O"))
-                                continue;
-                            array.add(str);
+                                numberFerm = Integer.parseInt(listValue.get(1).toString());
+                                if (numberFerm == 0) {
+                                    m_textPlugRent.setText("У вас нет сдаваемых квартир");
+                                    return;
+                                }
+                            } else {
+                                if (listValue.size() == 9) {
+                                    adapter.onItemArray(listValue);
+                                    countFerm++;
+                                } else
+                                    throw new CException("Ошибка парсера");
+                            }
                         }
-                        if(!array.isEmpty()) {
-                            ((CRecyclerAdapter) m_recyclerViewRent.getAdapter()).onItemAdd(array);
-                            array.clear();
-                        }
-                    }
 
-                    int size = m_recyclerViewRent.getAdapter().getItemCount();
-                    if(size > 0) {
-                        m_textPlugRent.setText("");
+                        if (countFerm != numberFerm)
+                            throw new CException("Ошибка парсера");
+
                         m_recyclerViewRent.setVisibility(View.VISIBLE);
+                        m_textPlugRent.setText("");
                     } else {
-                        m_textPlugRent.setText("Вы не сдаете квартиры");
-                        m_recyclerViewRent.setVisibility(View.INVISIBLE);
+                        throw new CException("Ошибка парсера");
                     }
+                } catch (CException error) {
+                    m_textPlugRent.setText(error.getMessage());
+                    // Toast.makeText(m_context, "Ошибка парсера", Toast.LENGTH_SHORT).show();
                 }
             }
         }

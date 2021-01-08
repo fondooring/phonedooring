@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
 import android.app.Fragment;
 import android.view.ViewGroup;

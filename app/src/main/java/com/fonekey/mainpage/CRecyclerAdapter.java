@@ -1,11 +1,8 @@
 package com.fonekey.mainpage;
 import com.fonekey.R;
-import com.fonekey.fermpage.CFermActivity;
-import com.fonekey.searchpage.CSearch;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.view.ViewGroup;
@@ -17,16 +14,12 @@ import android.widget.ImageView;
 import android.widget.ImageButton;
 import android.view.LayoutInflater;
 import android.graphics.BitmapFactory;
+import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.StringTokenizer;
 import java.io.ByteArrayOutputStream;
 
 public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFermViewHolder>
@@ -149,6 +142,9 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
     }
 
     @Override
+    public int getItemCount() { return m_lstFerm.size(); }
+
+    @Override
     public void onBindViewHolder(@NotNull CFermViewHolder viewHolder, final int position) {
         viewHolder.m_street.setText(m_lstFerm.get(position).m_street);
         viewHolder.m_house.setText(m_lstFerm.get(position).m_house);
@@ -165,43 +161,33 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
                     if (!m_owner)
                         m_context.startActivity(new Intent(m_context, CRegistrationActivity.class));
                 } else {
-                    String answer = "";
-                    ArrayList<String> array = new ArrayList<>();
-                    ArrayList<String> message = new ArrayList<>();
-                    message.add("P");
-                    message.add(CSearch.town);
-                    message.add("#");
-                    message.add(m_lstFerm.get(position).m_id);
-                    message.add("33");
-                    message.add("44");
+                    ArrayList<byte[]> data = new ArrayList<>();
+                    // data.add(CSearch.town.getBytes());
+                    data.add("111".getBytes());
+                    data.add(m_lstFerm.get(position).m_id.getBytes());
+                    data.add("20-10-2020 12:00:00".getBytes());
+                    data.add("20-10-2020 12:00:01".getBytes());
+                    data.add(CMainActivity.m_userId.getBytes());
 
-                    String str = message.toString();
-                    int result = CClient.SendData(str.substring(1, str.length() - 1).replace(", ", "|"));
-                    if(result == 0) {
-                        result = CClient.ReadData();
-                        if (result == 0) {
-                            answer = CClient.GetBuffer();
-                            if (!answer.isEmpty()) {
-                                StringTokenizer list = new StringTokenizer(answer, "#");
-                                while (list.hasMoreTokens()) {
-                                    StringTokenizer item = new StringTokenizer(list.nextToken(), "|");
-                                    while (item.hasMoreTokens()) {
-                                        str = item.nextToken();
-                                        if (str.equals("P"))
-                                            continue;
-                                        array.add(str);
-                                    }
-                                    if (!array.isEmpty())
-                                        array.clear();
-                                        if(str == "1") {
-                                            //
-                                        } else {
-                                            //
-                                        }
+                    ByteArrayOutputStream message = CClient.CreateMessage(data, (byte)0x50); // "P"
+                    ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte)0x50);
+                    if(answer != null) {
+                        if(!answer.isEmpty()) {
+                            ArrayList<ByteArrayOutputStream> item = answer.get(0);
+                            if(!item.isEmpty()) {
+                                byte[] result = item.get(0).toByteArray();
+                                if(result.length != 0) {
+                                    if (result[0] == (byte) 0x31) {
+                                        Toast.makeText(m_context, "Квартира куплена", Toast.LENGTH_SHORT).show();
+                                    } else
+                                        Toast.makeText(m_context, "Квартира не куплена", Toast.LENGTH_SHORT).show();
+                                    return;
                                 }
                             }
                         }
-                    }
+                        Toast.makeText(m_context, "Ошибка парсера", Toast.LENGTH_SHORT).show();
+                    } else
+                        Toast.makeText(m_context, R.string.not_connection, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -209,98 +195,69 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         viewHolder.m_layotFerm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                try {
-                    buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x52});
-                    buffer.write("111".getBytes());
-                    buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0x60});
-                    buffer.write(m_lstFerm.get(position).m_id.getBytes());
-                    buffer.write(new byte[]{(byte) 0xFA, (byte) 0xFB, (byte) 0xFF});
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
-                int result = CClient.SendArray(buffer.toByteArray());
-                if(result == 0) {
-                    result = CClient.ReadData();
-                    if (result == 0) {
+                ArrayList<byte[]> data = new ArrayList<>();
+                data.add("111".getBytes());
+                data.add(m_lstFerm.get(position).m_id.getBytes());
 
-                        byte[] answerArray = CClient.GetBufferArray();
-                        int sizeArray = answerArray.length;
+                ByteArrayOutputStream message = CClient.CreateMessage(data, (byte)0x52); // "R"
+                ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte)0x52);
+                if(answer != null) {
+                    try {
+                        if(!answer.isEmpty()) {
+                            ArrayList<ByteArrayOutputStream> item = answer.get(0);
+                            int sizeArray = item.size();
+                            int posArray = 0;
 
-                        if (sizeArray != 0) {
-                            ArrayList<ArrayList<ByteArrayOutputStream>> parse = CClient.Parse(answerArray, sizeArray, (byte) 0x52);
-                            if (!parse.isEmpty()) {
-                                Intent intent = new Intent(m_context, CViewFermActivity.class);
-                                ArrayList<ByteArrayOutputStream> item = parse.get(0);
-                                sizeArray = item.size();
-                                int t_position = 0;
+                            Intent intent = new Intent(m_context, CViewFermActivity.class);
+                            intent.putExtra("town", m_lstFerm.get(position).m_town);
+                            intent.putExtra("street", m_lstFerm.get(position).m_street);
+                            intent.putExtra("house", m_lstFerm.get(position).m_house);
+                            if (posArray >= sizeArray)
+                                throw new Error();
+                            intent.putExtra("owner", item.get(posArray++).toString());
+                            intent.putExtra("rating", m_lstFerm.get(position).m_rating);
+                            intent.putExtra("distance", m_lstFerm.get(position).m_distance);
+                            intent.putExtra("number_rooms", m_lstFerm.get(position).m_number_rooms);
+                            if (posArray >= sizeArray)
+                                throw new Error();
+                            intent.putExtra("geo", item.get(posArray++).toString());
+                            if (posArray >= sizeArray)
+                                throw new Error();
+                            intent.putExtra("description", item.get(posArray++).toString());
+                            intent.putExtra("foto_0", m_lstFerm.get(position).m_foto);
+                            if (posArray >= sizeArray)
+                                throw new Error();
+                            intent.putExtra("foto_1", item.get(posArray++).toByteArray());
+                            if (posArray >= sizeArray)
+                                throw new Error();
+                            intent.putExtra("foto_2", item.get(posArray++).toByteArray());
+                            if (posArray >= sizeArray)
+                                throw new Error();
+                            intent.putExtra("foto_3", item.get(posArray++).toByteArray());
+                            if (posArray >= sizeArray)
+                                throw new Error();
+                            intent.putExtra("foto_4", item.get(posArray++).toByteArray());
 
-                                intent.putExtra("town", m_lstFerm.get(position).m_town);
-
-                                intent.putExtra("street", m_lstFerm.get(position).m_street);
-                                intent.putExtra("house", m_lstFerm.get(position).m_house);
-
-                                if(t_position < sizeArray)
-                                    intent.putExtra("owner", item.get(t_position++).toString());
+                            int number_comments = Integer.parseInt(item.get(posArray++).toString());
+                            intent.putExtra("number_comments", number_comments);
+                            for (int i = 0; i < number_comments; i++) {
+                                if (posArray < sizeArray)
+                                    intent.putExtra("comments_" + i, item.get(posArray++).toByteArray());
                                 else
-                                    return;
-
-                                intent.putExtra("rating", m_lstFerm.get(position).m_rating);
-                                intent.putExtra("distance", m_lstFerm.get(position).m_distance);
-                                intent.putExtra("number_rooms", m_lstFerm.get(position).m_number_rooms);
-
-                                if(t_position < sizeArray)
-                                    intent.putExtra("geo", item.get(t_position++).toString());
-                                else
-                                    return;
-                                if(t_position < sizeArray)
-                                    intent.putExtra("description", item.get(t_position++).toString());
-                                else
-                                    return;
-
-                                intent.putExtra("foto_0", m_lstFerm.get(position).m_foto);
-
-                                if(t_position < sizeArray)
-                                    intent.putExtra("foto_1", item.get(t_position++).toByteArray());
-                                else
-                                    return;
-
-                                if(t_position < sizeArray)
-                                    intent.putExtra("foto_2", item.get(t_position++).toByteArray());
-                                else
-                                    return;
-
-                                if(t_position < sizeArray)
-                                    intent.putExtra("foto_3", item.get(t_position++).toByteArray());
-                                else
-                                    return;
-
-                                if(t_position < sizeArray)
-                                    intent.putExtra("foto_4", item.get(t_position++).toByteArray());
-                                else
-                                    return;
-
-                                int number_comments = Integer.parseInt(item.get(t_position++).toString());
-                                //int number_comments =  ByteBuffer.wrap(item.get(t_position++).toByteArray()).getShort();
-                                intent.putExtra("number_comments", number_comments);
-                                for(int i = 0; i < number_comments; i++) {
-                                    if(t_position < sizeArray)
-                                        intent.putExtra("comments_" + i, item.get(t_position++).toByteArray());
-                                    else
-                                        return;
-                                }
-
-                                if(t_position == sizeArray)
-                                    m_context.startActivity(intent);
+                                    throw new Error();
                             }
-                        }
+                            if(posArray != sizeArray)
+                                throw new Error();
+                            m_context.startActivity(intent);
+                        } else
+                            throw new Error();
+                    } catch (Throwable error) {
+                        Toast.makeText(m_context, "Ошибка парсера", Toast.LENGTH_SHORT).show();
                     }
-                }
+                } else
+                    Toast.makeText(m_context, R.string.not_connection, Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-    @Override
-    public int getItemCount() { return m_lstFerm.size(); }
 }
