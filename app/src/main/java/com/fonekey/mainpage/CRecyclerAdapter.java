@@ -101,25 +101,6 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
             onItemDel(0);
     }
 
-    public void onItemAdd(@NotNull ArrayList<String> data)
-    {
-        int position = 0;
-        CFerm ferm = new CFerm();
-        ferm.m_id = data.get(position++);
-        ferm.m_town = "Москва";
-        ferm.m_street = data.get(position++);
-        ferm.m_house = data.get(position++);
-        ferm.m_rating = data.get(position++);
-        ferm.m_distance = data.get(position++);
-        ferm.m_number_rooms = data.get(position++);
-        ferm.m_price = data.get(position++);
-        //ferm.m_foto = data.get(position++);
-
-        m_lstFerm.add(0, ferm);
-        notifyItemInserted(0);
-        // notifyItemRangeInserted(m_lstFerm.size() + 1, m_lstFerm.size());
-    }
-
     public void onItemArray(@NotNull ArrayList<ByteArrayOutputStream> data) {
         int position = 0;
         CFerm ferm = new CFerm();
@@ -154,6 +135,7 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         viewHolder.m_price.setText(m_lstFerm.get(position).m_price);
         viewHolder.m_imgFerm.setImageBitmap(BitmapFactory.decodeByteArray(m_lstFerm.get(position).m_foto, 0, m_lstFerm.get(position).m_foto.length));
 
+        // Оплата покупки
         viewHolder.m_btnPayDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -192,6 +174,7 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
             }
         });
 
+        // Чтение квартиры
         viewHolder.m_layotFerm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,8 +187,12 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
                 ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte)0x52);
                 if(answer != null) {
                     try {
-                        if(!answer.isEmpty()) {
+                        if(answer.size() == 2) {
                             ArrayList<ByteArrayOutputStream> item = answer.get(0);
+                            if(item.get(0).toByteArray()[0] != '0')
+                                throw new CException("Ошибка сервера");
+
+                            item = answer.get(1);
                             int sizeArray = item.size();
                             int posArray = 0;
 
@@ -214,46 +201,51 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
                             intent.putExtra("street", m_lstFerm.get(position).m_street);
                             intent.putExtra("house", m_lstFerm.get(position).m_house);
                             if (posArray >= sizeArray)
-                                throw new Error();
+                                throw new CException("Ошибка парсера");
                             intent.putExtra("owner", item.get(posArray++).toString());
                             intent.putExtra("rating", m_lstFerm.get(position).m_rating);
                             intent.putExtra("distance", m_lstFerm.get(position).m_distance);
                             intent.putExtra("number_rooms", m_lstFerm.get(position).m_number_rooms);
-                            if (posArray >= sizeArray)
-                                throw new Error();
+                            if(posArray >= sizeArray)
+                                throw new CException("Ошибка парсера");
                             intent.putExtra("geo", item.get(posArray++).toString());
-                            if (posArray >= sizeArray)
-                                throw new Error();
+                            if(posArray >= sizeArray)
+                                throw new CException("Ошибка парсера");
                             intent.putExtra("description", item.get(posArray++).toString());
                             intent.putExtra("foto_0", m_lstFerm.get(position).m_foto);
-                            if (posArray >= sizeArray)
-                                throw new Error();
-                            intent.putExtra("foto_1", item.get(posArray++).toByteArray());
-                            if (posArray >= sizeArray)
-                                throw new Error();
-                            intent.putExtra("foto_2", item.get(posArray++).toByteArray());
-                            if (posArray >= sizeArray)
-                                throw new Error();
-                            intent.putExtra("foto_3", item.get(posArray++).toByteArray());
-                            if (posArray >= sizeArray)
-                                throw new Error();
-                            intent.putExtra("foto_4", item.get(posArray++).toByteArray());
 
-                            int number_comments = Integer.parseInt(item.get(posArray++).toString());
-                            intent.putExtra("number_comments", number_comments);
-                            for (int i = 0; i < number_comments; i++) {
-                                if (posArray < sizeArray)
-                                    intent.putExtra("comments_" + i, item.get(posArray++).toByteArray());
-                                else
-                                    throw new Error();
-                            }
+                            if(posArray < sizeArray) {
+                                int number_photo = Integer.parseInt(item.get(posArray++).toString());
+                                intent.putExtra("number_photo", number_photo);
+                                for(int i = 1; i < number_photo; i++) {
+                                    if(posArray < sizeArray)
+                                        intent.putExtra("foto_" + i, item.get(posArray++).toByteArray());
+                                    else
+                                        throw new CException("Ошибка парсера");
+                                }
+                            } else
+                                throw new CException("Ошибка парсера");
+
+                            if(posArray < sizeArray) {
+                                int number_comments = Integer.parseInt(item.get(posArray++).toString());
+                                intent.putExtra("number_comments", number_comments);
+                                for (int i = 0; i < number_comments; i++) {
+                                    if (posArray < sizeArray)
+                                        intent.putExtra("comments_" + i, item.get(posArray++).toByteArray());
+                                    else
+                                        throw new CException("Ошибка парсера");
+                                }
+                            } else
+                                throw new CException("Ошибка парсера");
+
                             if(posArray != sizeArray)
-                                throw new Error();
+                                throw new CException("Ошибка парсера");
+
                             m_context.startActivity(intent);
                         } else
                             throw new Error();
-                    } catch (Throwable error) {
-                        Toast.makeText(m_context, "Ошибка парсера", Toast.LENGTH_SHORT).show();
+                    } catch (CException error) {
+                        Toast.makeText(m_context, error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 } else
                     Toast.makeText(m_context, R.string.not_connection, Toast.LENGTH_SHORT).show();

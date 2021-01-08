@@ -17,7 +17,7 @@ public class CClient extends Thread {
     private static Socket m_socket;
 
     private static final String SERVER_IP = "192.168.1.66";
-    private static final int SERVERPORT = 4000;
+    private static final int SERVERPORT = 3000;
     private static final int SIZE_BUFF = 64000;
 
     //private static final int UNCNOWN_HOST_EXCEPTION = 2;

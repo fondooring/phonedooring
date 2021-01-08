@@ -2,6 +2,7 @@ package com.fonekey.searchpage;
 import com.fonekey.R;
 
 import com.fonekey.mainpage.CClient;
+import com.fonekey.mainpage.CException;
 import com.fonekey.mainpage.CRecyclerAdapter;
 
 import androidx.annotation.NonNull;
@@ -48,33 +49,51 @@ public class CListFragment extends Fragment {
 
     // Получения списка квартир
     private void GetListFerms() {
+
         m_textPlugList.setText(R.string.not_connection);
-        ((CRecyclerAdapter) m_recyclerViewList.getAdapter()).onClear();
         m_recyclerViewList.setVisibility(View.INVISIBLE);
+        CRecyclerAdapter adapter = (CRecyclerAdapter)m_recyclerViewList.getAdapter();
+        if(adapter != null) {
+            adapter.onClear();
 
-        ArrayList<byte[]> data = new ArrayList<>();
-        data.add("111".getBytes());
-        data.add(CSearch.number_person.getBytes());
-        //buffer.write(CSearch.date_begin.getBytes());
-        data.add("20-10-2020 12:00:00".getBytes());
-        //buffer.write(CSearch.date_end.getBytes());
-        data.add("20-10-2020 12:00:01".getBytes());
+            ArrayList<byte[]> data = new ArrayList<>();
+            data.add("111".getBytes());
+            data.add(CSearch.number_person.getBytes());
+            //buffer.write(CSearch.date_begin.getBytes());
+            data.add("20-10-2020 12:00:00".getBytes());
+            //buffer.write(CSearch.date_end.getBytes());
+            data.add("20-10-2020 12:00:01".getBytes());
 
-        ByteArrayOutputStream message = CClient.CreateMessage(data, (byte)0x4C); // "L"
-        ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte) 0x4C);
-        if(answer != null && !answer.isEmpty()) {
-            for (ArrayList<ByteArrayOutputStream> p : answer) {
-                ((CRecyclerAdapter) m_recyclerViewList.getAdapter()).onItemArray(p);
+            ByteArrayOutputStream message = CClient.CreateMessage(data, (byte) 0x4C); // "L"
+            ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte) 0x4C);
+            if (answer != null) {
+                try {
+                    if(!answer.isEmpty()) {
+                        for (ArrayList<ByteArrayOutputStream> listValue : answer) {
+                            if (listValue.size() == 1) {
+                                if (listValue.get(0).toByteArray()[0] == '0') {
+                                    if (answer.size() == 1)
+                                        throw new CException("Нет результатов");
+                                } else
+                                    throw new CException("Ошибка сервера");
+                            } else {
+                                if (listValue.size() == 9)
+                                    adapter.onItemArray(listValue);
+                                else
+                                    throw new CException("Ошибка сервера");
+                            }
+                        }
+
+                        if(adapter.getItemCount() > 0) {
+                            m_textPlugList.setText("");
+                            m_recyclerViewList.setVisibility(View.VISIBLE);
+                        }
+                    } else
+                        throw  new CException("Ошибка парсера");
+                } catch (CException ex) {
+                    m_textPlugList.setText(ex.getMessage());
+                }
             }
-        }
-
-        int size = m_recyclerViewList.getAdapter().getItemCount();
-        if(size > 0) {
-            m_textPlugList.setText("");
-            m_recyclerViewList.setVisibility(View.VISIBLE);
-        } else {
-            m_textPlugList.setText("Нет результатов");
-            m_recyclerViewList.setVisibility(View.INVISIBLE);
         }
     }
 

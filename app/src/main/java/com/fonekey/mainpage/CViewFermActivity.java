@@ -54,26 +54,29 @@ public class CViewFermActivity extends AppCompatActivity {
         byte[] tempFoto;
         int sizeFoto = 0;
 
-        tempFoto = intent.getByteArrayExtra("foto_0");
-        sizeFoto = tempFoto.length;
-        imgMain.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
-        imgFoto0.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
-
-        tempFoto = intent.getByteArrayExtra("foto_1");
-        sizeFoto = tempFoto.length;
-        imgFoto1.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
-
-        tempFoto = intent.getByteArrayExtra("foto_2");
-        sizeFoto = tempFoto.length;
-        imgFoto2.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
-
-        tempFoto = intent.getByteArrayExtra("foto_3");
-        sizeFoto = tempFoto.length;
-        imgFoto3.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
-
-        tempFoto = intent.getByteArrayExtra("foto_4");
-        sizeFoto = tempFoto.length;
-        imgFoto4.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
+        int number_photo = intent.getIntExtra("number_photo", 0);
+        for(int i = 0; i < number_photo; i++) {
+            tempFoto = intent.getByteArrayExtra("foto_" + i);
+            sizeFoto = tempFoto.length;
+            switch (i) {
+                case 0:
+                    imgMain.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
+                    imgFoto0.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
+                    break;
+                case 1:
+                    imgFoto1.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
+                    break;
+                case 2:
+                    imgFoto2.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
+                    break;
+                case 3:
+                    imgFoto3.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
+                    break;
+                case 4:
+                    imgFoto4.setImageBitmap(BitmapFactory.decodeByteArray(tempFoto, 0, sizeFoto));
+                    break;
+            }
+        }
 
         ArrayList<String> comments = new ArrayList<>();
 
