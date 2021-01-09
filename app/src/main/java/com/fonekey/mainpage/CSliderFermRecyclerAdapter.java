@@ -36,12 +36,14 @@ public class CSliderFermRecyclerAdapter extends RecyclerView.Adapter<CSliderFerm
     public static class CFermViewHolder extends RecyclerView.ViewHolder
     {
         TextView m_data;
+        TextView m_fermid;
         SwitchCompat m_swchFermEnable;
 
         public CFermViewHolder(View itemView) {
             super (itemView);
             m_swchFermEnable = itemView.findViewById(R.id.switchEnableFerm);
             m_data = itemView.findViewById(R.id.txtDateKey);
+            m_fermid = itemView.findViewById(R.id.txtFermID);
         }
     }
 
@@ -64,9 +66,10 @@ public class CSliderFermRecyclerAdapter extends RecyclerView.Adapter<CSliderFerm
     public void onItemAdd(@NotNull ArrayList<ByteArrayOutputStream> data)
     {
         CFermSlider fermSlider = new CFermSlider();
-        fermSlider.m_fermId = data.get(1).toString();
+        fermSlider.m_fermId = data.get(0).toString();
         fermSlider.m_dataBegin = "1.1.2020";
         fermSlider.m_dataEnd = "31.12.2020";
+        fermSlider.m_tag = data.get(3).toString();
         fermSlider.m_enable = false;
 
         m_lstFerm.add(0, fermSlider);
@@ -77,6 +80,7 @@ public class CSliderFermRecyclerAdapter extends RecyclerView.Adapter<CSliderFerm
     public void onBindViewHolder(CFermViewHolder viewHolder, final int position) {
         String data = m_lstFerm.get(position).m_dataBegin + " - " + m_lstFerm.get(position).m_dataEnd;
         viewHolder.m_data.setText(data);
+        viewHolder.m_fermid.setText(m_lstFerm.get(position).m_tag);
         viewHolder.m_swchFermEnable.setText(m_lstFerm.get(position).m_fermId);
         viewHolder.m_swchFermEnable.setChecked(m_lstFerm.get(position).m_enable);
 

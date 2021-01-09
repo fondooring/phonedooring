@@ -21,12 +21,20 @@
             android:layout_gravity="center"
             android:text="Data"/>
 
+        <TextView
+            android:id="@+id/txtFermID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_gravity="center"
+            android:text="Ferm ID"/>
+
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchEnableFerm"
             android:layout_width="200dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:text="FermID"/>
+            android:text="Tag"/>
 
     </LinearLayout>
 
