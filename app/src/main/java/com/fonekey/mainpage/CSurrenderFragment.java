@@ -44,53 +44,58 @@ public class CSurrenderFragment extends Fragment {
 
     // Получения списка ключей
     private void GetListFerms() {
-        m_textPlugSurrender.setText(R.string.not_connection);
+        m_textPlugSurrender.setText("Ошибка программы.\nПерезагрузите её");
         m_recyclerViewSurrender.setVisibility(View.INVISIBLE);
+        CSliderFermRecyclerAdapter adapter = (CSliderFermRecyclerAdapter)m_recyclerViewSurrender.getAdapter();
+        if(adapter != null) {
+            adapter.onClear();
+            m_textPlugSurrender.setText(R.string.not_connection);
 
-        ArrayList<byte[]> data = new ArrayList<>();
-        data.add(CMainActivity.m_userId.getBytes());
+            ArrayList<byte[]> data = new ArrayList<>();
+            data.add(CMainActivity.m_userId.getBytes());
 
-        ByteArrayOutputStream message = CClient.CreateMessage(data, (byte)0x4B); // "K"
-        ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte)0x4B);
-        if(answer != null) {
-            try {
-                if (!answer.isEmpty()) {
-                    Iterator<ArrayList<ByteArrayOutputStream>> itr = answer.iterator();
-                    int countFerm = 0;
-                    int numberFerm = 0;
-                    while(itr.hasNext()) {
-                        ArrayList<ByteArrayOutputStream> listValue = itr.next();
-                        if(listValue.size() == 2) {
-                            if(listValue.get(0).toByteArray()[0] != '0')
-                                throw new CException("Ошибка сервера");
+            ByteArrayOutputStream message = CClient.CreateMessage(data, (byte) 0x4B); // "K"
+            ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte) 0x4B);
+            if (answer != null) {
+                try {
+                    if (!answer.isEmpty()) {
+                        Iterator<ArrayList<ByteArrayOutputStream>> itr = answer.iterator();
+                        int countFerm = 0;
+                        int numberFerm = 0;
+                        while (itr.hasNext()) {
+                            ArrayList<ByteArrayOutputStream> listValue = itr.next();
+                            if (listValue.size() == 2) {
+                                if (listValue.get(0).toByteArray()[0] != '0')
+                                    throw new CException("Ошибка сервера");
 
-                            numberFerm = Integer.parseInt(listValue.get(1).toString());
-                            if(numberFerm == 0) {
-                                m_textPlugSurrender.setText("У вас нет ключей от квартир");
-                                return;
+                                numberFerm = Integer.parseInt(listValue.get(1).toString());
+                                if (numberFerm == 0) {
+                                    m_textPlugSurrender.setText("У вас нет ключей от квартир");
+                                    return;
+                                }
+                            } else {
+                                if (listValue.size() == 4) {
+                                    adapter.onItemAdd(listValue);
+                                    countFerm++;
+                                } else
+                                    throw new CException("Ошибка парсера");
                             }
-                        } else {
-                            if (listValue.size() == 4) {
-                                ((CSliderFermRecyclerAdapter) m_recyclerViewSurrender.getAdapter()).onItemAdd(listValue);
-                                countFerm++;
-                            } else
-                                throw new CException("Ошибка парсера");
                         }
-                    }
 
-                    if(countFerm != numberFerm)
+                        if (countFerm != numberFerm)
+                            throw new CException("Ошибка парсера");
+
+                        m_recyclerViewSurrender.setVisibility(View.VISIBLE);
+                        m_textPlugSurrender.setText("");
+
+                    } else {
                         throw new CException("Ошибка парсера");
-
-                    m_recyclerViewSurrender.setVisibility(View.VISIBLE);
-                    m_textPlugSurrender.setText("");
-
-                } else {
-                    throw new CException("Ошибка парсера");
+                    }
+                } catch (CException error) {
+                    m_textPlugSurrender.setText(error.getMessage());
                 }
-            } catch (CException error) {
-                m_textPlugSurrender.setText(error.getMessage());
-            }
 
+            }
         }
     }
 

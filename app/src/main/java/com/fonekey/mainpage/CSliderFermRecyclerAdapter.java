@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 
 public class CSliderFermRecyclerAdapter extends RecyclerView.Adapter<CSliderFermRecyclerAdapter.CFermViewHolder>
 {
+    static byte[] g_tag = new byte[11];
+
     private List<CFermSlider> m_lstFerm;
     private Context m_context;
 
@@ -84,12 +87,20 @@ public class CSliderFermRecyclerAdapter extends RecyclerView.Adapter<CSliderFerm
         viewHolder.m_swchFermEnable.setText(m_lstFerm.get(position).m_fermId);
         viewHolder.m_swchFermEnable.setChecked(m_lstFerm.get(position).m_enable);
 
-        viewHolder.m_swchFermEnable.setOnClickListener(new View.OnClickListener() {
+        viewHolder.m_swchFermEnable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-                int t = position;
+            public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked)
+            {
+                for(int i = 0; i < 10; i++)
+                    g_tag[i] = m_lstFerm.get(position).m_tag.getBytes()[i];
+
+                if(isChecked)
+                    g_tag[10] = 1;
+                else
+                    g_tag[10] = 0;
             }
         });
+
     }
 
     @Override

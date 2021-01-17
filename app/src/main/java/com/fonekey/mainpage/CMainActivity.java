@@ -61,6 +61,12 @@ public class CMainActivity extends AppCompatActivity {
         LoadUserId();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        m_client.Close();
+    }
+
     public void onClick(@NotNull View v) {
         FragmentTransaction m_fTrans = getFragmentManager().beginTransaction();
         switch (v.getId()) {

@@ -1,5 +1,8 @@
 package com.fonekey.mainpage;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.DataOutputStream;
@@ -76,10 +79,10 @@ public class CClient extends Thread {
                     }
 
                     //m_result = SUCCESS;
-                } catch (UnknownHostException e) {
+                } catch(UnknownHostException e) {
                     e.printStackTrace();
                     //m_result = UNCNOWN_HOST_EXCEPTION;
-                } catch (IOException e) {
+                } catch(IOException e) {
                     e.printStackTrace();
                     //m_result = IO_EXCEPTION;
                 }
@@ -101,11 +104,11 @@ public class CClient extends Thread {
                     dos.writeInt(size);
                     dos.write(message,0, size);
                     dos.flush();
-                } catch (UnknownHostException e) {
+                } catch(UnknownHostException e) {
                     e.printStackTrace();
-                } catch (IOException e) {
+                } catch(IOException e) {
                     e.printStackTrace();
-                } catch (Exception e) {
+                } catch(Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -127,6 +130,15 @@ public class CClient extends Thread {
         StartThread(new Thread(new ClientThreadInit()));
     }
 
+    public void Close() {
+        try {
+            m_socket.close();
+        } catch (IOException exc) {
+            exc.printStackTrace();
+        }
+    }
+
+    @Nullable
     public static ArrayList<ArrayList<ByteArrayOutputStream>> DataExchange(byte[] data, byte command)
     {
         m_bufferArrayStream.reset();
@@ -143,7 +155,8 @@ public class CClient extends Thread {
             return null;
     }
 
-    public static ByteArrayOutputStream CreateMessage(ArrayList<byte[]> message, byte command) {
+    @NotNull
+    public static ByteArrayOutputStream CreateMessage(@NotNull ArrayList<byte[]> message, byte command) {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
         try {
@@ -176,6 +189,7 @@ public class CClient extends Thread {
         return StartThread(new Thread(new ClientThreadSend()));
     }
 
+    @NotNull
     private static byte[] Read() {
         StartThread(new Thread(new ClientThreadRead()));
         return m_bufferArrayStream.toByteArray();

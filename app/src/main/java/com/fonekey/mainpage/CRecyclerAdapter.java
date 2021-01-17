@@ -154,20 +154,25 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
                     ByteArrayOutputStream message = CClient.CreateMessage(data, (byte)0x50); // "P"
                     ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte)0x50);
                     if(answer != null) {
-                        if(!answer.isEmpty()) {
-                            ArrayList<ByteArrayOutputStream> item = answer.get(0);
-                            if(!item.isEmpty()) {
-                                byte[] result = item.get(0).toByteArray();
-                                if(result.length != 0) {
-                                    if (result[0] == (byte) 0x31) {
-                                        Toast.makeText(m_context, "Квартира куплена", Toast.LENGTH_SHORT).show();
-                                    } else
-                                        Toast.makeText(m_context, "Квартира не куплена", Toast.LENGTH_SHORT).show();
-                                    return;
+                        try {
+
+                            if(!answer.isEmpty()) {
+                                ArrayList<ByteArrayOutputStream> listValue = answer.get(0);
+                                if(listValue.size() == 1) {
+                                    byte[] arrayValue = listValue.get(0).toByteArray();
+                                    if(arrayValue.length == 1) {
+                                        if(arrayValue[0] == (byte)0x31)
+                                            throw new CException("Квартира куплена");
+                                        else
+                                            throw new CException("Квартира не куплена");
+                                    }
                                 }
                             }
+                            throw new CException("Ошибка парсера");
+
+                        } catch (CException exc) {
+                            Toast.makeText(m_context, exc.getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(m_context, "Ошибка парсера", Toast.LENGTH_SHORT).show();
                     } else
                         Toast.makeText(m_context, R.string.not_connection, Toast.LENGTH_SHORT).show();
                 }

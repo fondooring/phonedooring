@@ -87,7 +87,7 @@ public class CFermActivity extends AppCompatActivity {
         m_streetSave.setText("Петровская");
         m_houseSave.setText("5");
         m_geo.setText("34.4568 55.6723");
-        m_ipHouse.setText("192.168.1.1");
+        m_ipHouse.setText("192.168.1.72");
         m_distanceSave.setText("12.5");
         m_numberPersonSave.setText("3");
         m_numberRoomsSave.setText("3");

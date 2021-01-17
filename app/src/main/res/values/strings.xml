@@ -25,4 +25,6 @@
     <string name="photo">Фото</string>
     <string name="save">Сохранить</string>
     <string name="registration">Регистрация</string>
+    <string name="servicedesc">TestNfc service</string>
+    <string name="aiddescription">TestNfc aid</string>
 </resources>
