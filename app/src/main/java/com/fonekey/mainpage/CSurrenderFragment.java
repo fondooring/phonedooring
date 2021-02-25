@@ -35,7 +35,7 @@ public class CSurrenderFragment extends Fragment {
 
         m_recyclerViewSurrender.setHasFixedSize(true);
         m_recyclerViewSurrender.setLayoutManager(new LinearLayoutManager(getActivity()));
-        m_recyclerViewSurrender.setAdapter(new CSliderFermRecyclerAdapter(getActivity()));
+        m_recyclerViewSurrender.setAdapter(new CSliderFermRecyclerAdapter());
 
         GetListFerms();
 

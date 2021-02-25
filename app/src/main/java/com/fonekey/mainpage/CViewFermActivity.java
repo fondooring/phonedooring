@@ -52,7 +52,7 @@ public class CViewFermActivity extends AppCompatActivity {
         txtDescription.setText(intent.getStringExtra("description"));
 
         byte[] tempFoto;
-        int sizeFoto = 0;
+        int sizeFoto;
 
         int number_photo = intent.getIntExtra("number_photo", 0);
         for(int i = 0; i < number_photo; i++) {

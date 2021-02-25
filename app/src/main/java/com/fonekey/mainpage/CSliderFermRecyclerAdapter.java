@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.content.Context;
 import android.view.LayoutInflater;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,14 +20,13 @@ public class CSliderFermRecyclerAdapter extends RecyclerView.Adapter<CSliderFerm
 {
     static byte[] g_tag = new byte[11];
 
-    private List<CFermSlider> m_lstFerm;
-    private Context m_context;
+    private final List<CFermSlider> m_lstFerm;
 
-    public CSliderFermRecyclerAdapter(Context context) {
-        m_context = context;
+    public CSliderFermRecyclerAdapter() {
         m_lstFerm = new ArrayList<>();
     }
 
+    @NotNull
     @Override
     public CFermViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType)
     {

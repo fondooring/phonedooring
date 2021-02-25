@@ -1,12 +1,6 @@
 package com.fonekey.mainpage;
 import com.fonekey.R;
-import com.fonekey.searchpage.CSearch;
-import com.fonekey.settingssearch.CDateFragment;
-import com.fonekey.settingssearch.CTownFragment;
-import com.fonekey.settingssearch.CNumberPersonFragment;
 import com.google.android.material.navigation.NavigationView;
-
-import org.jetbrains.annotations.NotNull;
 
 import androidx.navigation.Navigation;
 import androidx.navigation.NavController;
@@ -17,8 +11,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.View;
-import android.app.FragmentTransaction;
 
 import java.io.File;
 import java.io.FileReader;
@@ -28,12 +20,8 @@ import java.io.BufferedReader;
 public class CMainActivity extends AppCompatActivity {
 
     private static final int m_layuot = R.layout.activity_main;
-    private CTownFragment m_townFragment;
-    private CDateFragment m_dateFragment;
-    private CNumberPersonFragment m_numberPersonFragment;
     private AppBarConfiguration mAppBarConfiguration;
 
-    public CSearch m_search;
     public static String m_userId;
     public static CClient m_client;
 
@@ -43,11 +31,7 @@ public class CMainActivity extends AppCompatActivity {
         setContentView(m_layuot);
 
         m_userId = "0000000000";
-        m_search = new CSearch();
         m_client = new CClient();
-        m_townFragment = new CTownFragment();
-        m_dateFragment = new CDateFragment();
-        m_numberPersonFragment = new CNumberPersonFragment();
 
         DrawerLayout drawer = findViewById(R.id.drawerLayout);
         NavigationView navigationView = findViewById(R.id.navigationView);
@@ -65,23 +49,6 @@ public class CMainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         m_client.Close();
-    }
-
-    public void onClick(@NotNull View v) {
-        FragmentTransaction m_fTrans = getFragmentManager().beginTransaction();
-        switch (v.getId()) {
-            case R.id.btnTown:
-                m_fTrans.replace(R.id.frgmCont, m_townFragment);
-                break;
-            case R.id.btnDate:
-                m_fTrans.replace(R.id.frgmCont, m_dateFragment);
-                break;
-            case R.id.btnNumberPerson:
-                m_fTrans.replace(R.id.frgmCont, m_numberPersonFragment);
-            default:
-                break;
-        }
-        m_fTrans.commit();
     }
 
     @Override

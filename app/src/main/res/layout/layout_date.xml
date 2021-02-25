@@ -1,10 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llDate"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center_horizontal">
 
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/txtDateViewBegin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1.1.2020"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/txtDateViewTire"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=" - "
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/txtDateViewEnd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="31.12.2020"
+            android:gravity="center"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -49,5 +78,12 @@
             android:layout_width="wrap_content"
             android:layout_height="100dp"/>
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btnSaveDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сохранить"
+        android:layout_gravity="center"/>
 
 </LinearLayout>

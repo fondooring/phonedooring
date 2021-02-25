@@ -1,8 +1,13 @@
 package com.fonekey.mainpage;
 import com.fonekey.R;
+import com.fonekey.searchpage.CListFragment;
+import com.fonekey.searchpage.CSearch;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.view.View;
 import android.widget.Button;
 import android.view.ViewGroup;
@@ -18,19 +23,32 @@ import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.ByteArrayOutputStream;
+import java.util.Set;
+
+import ru.yandex.money.android.sdk.Amount;
+
+import ru.yandex.money.android.sdk.Checkout;
+import ru.yandex.money.android.sdk.PaymentMethodType;
+import ru.yandex.money.android.sdk.PaymentParameters;
+import ru.yandex.money.android.sdk.SavePaymentMethod;
 
 public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFermViewHolder>
 {
     private static boolean m_owner; // true - owner ferms, false - all list ferms
     private final List<CFerm> m_lstFerm;
     private final Context m_context;
+    private final Fragment m_fragment;
 
-    public CRecyclerAdapter(boolean owner, Context context) {
+    public CRecyclerAdapter(boolean owner, Context context, Fragment fragment) {
         m_owner = owner;
         m_context = context;
+        m_fragment = fragment;
         m_lstFerm = new ArrayList<>();
     }
 
@@ -139,42 +157,46 @@ public class CRecyclerAdapter extends RecyclerView.Adapter<CRecyclerAdapter.CFer
         viewHolder.m_btnPayDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(CMainActivity.m_userId.equals("")) {
-                    if (!m_owner)
-                        m_context.startActivity(new Intent(m_context, CRegistrationActivity.class));
-                } else {
-                    ArrayList<byte[]> data = new ArrayList<>();
+                if(!CMainActivity.m_userId.equals("0000000000")) {
+
+                        Set<PaymentMethodType> paymentMethodTypes = new HashSet<>();
+                        paymentMethodTypes.add(PaymentMethodType.BANK_CARD);
+                        paymentMethodTypes.add(PaymentMethodType.SBERBANK);
+                        paymentMethodTypes.add(PaymentMethodType.GOOGLE_PAY);
+
+                        PaymentParameters paymentParameters = new PaymentParameters(
+                                new Amount(BigDecimal.TEN, Currency.getInstance("RUB")),
+                                "Название товара",
+                                "Описание товара",
+                                "test_NzU3NTY0CGtWr6U1ep6M5GCSjKm6n10pXdoKnqFmZ4E",
+                                "757564",
+                                SavePaymentMethod.OFF,
+                                paymentMethodTypes
+                        );
+
+                        Intent intentToken = Checkout.createTokenizeIntent(m_context, paymentParameters);
+                        m_fragment.startActivityForResult(intentToken, CListFragment.REQUEST_CODE_TOKENIZE);
+
+                    /*Intent intentSend = new Intent(m_context, CListFragment.class);
+                    intentSend.putExtra("town", "111");
                     // data.add(CSearch.town.getBytes());
-                    data.add("111".getBytes());
-                    data.add(m_lstFerm.get(position).m_id.getBytes());
-                    data.add("20-10-2020 12:00:00".getBytes());
-                    data.add("20-10-2020 12:00:01".getBytes());
-                    data.add(CMainActivity.m_userId.getBytes());
+                    intentSend.putExtra("town", "111".getBytes());
+                    intentSend.putExtra("ferm_id", m_lstFerm.get(position).m_id.getBytes());
+                    intentSend.putExtra("time_begin", "20-10-2020 12:00:00".getBytes());
+                    intentSend.putExtra("time_end", "20-10-2020 12:00:01".getBytes());
+                    m_fragment.startActivityForResult(intentSend, CListFragment.REQUEST_CODE_SEND);*/
 
-                    ByteArrayOutputStream message = CClient.CreateMessage(data, (byte)0x50); // "P"
-                    ArrayList<ArrayList<ByteArrayOutputStream>> answer = CClient.DataExchange(message.toByteArray(), (byte)0x50);
-                    if(answer != null) {
-                        try {
+                    Intent intentSend = ((Activity) m_context).getIntent();
+                    intentSend.putExtra("town", "111".getBytes());
+                    intentSend.putExtra("ferm_id", m_lstFerm.get(position).m_id.getBytes());
+                    intentSend.putExtra("time_begin", "20-10-2020 12:00:00".getBytes());
+                    intentSend.putExtra("time_end", "20-10-2020 12:00:01".getBytes());
 
-                            if(!answer.isEmpty()) {
-                                ArrayList<ByteArrayOutputStream> listValue = answer.get(0);
-                                if(listValue.size() == 1) {
-                                    byte[] arrayValue = listValue.get(0).toByteArray();
-                                    if(arrayValue.length == 1) {
-                                        if(arrayValue[0] == (byte)0x31)
-                                            throw new CException("Квартира куплена");
-                                        else
-                                            throw new CException("Квартира не куплена");
-                                    }
-                                }
-                            }
-                            throw new CException("Ошибка парсера");
+                    ((Activity) m_context).setResult(Activity.RESULT_OK, intentSend);
+                    //((Activity) m_context).finish();
 
-                        } catch (CException exc) {
-                            Toast.makeText(m_context, exc.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    } else
-                        Toast.makeText(m_context, R.string.not_connection, Toast.LENGTH_SHORT).show();
+                } else {
+                    m_context.startActivity(new Intent(m_context, CRegistrationActivity.class));
                 }
             }
         });

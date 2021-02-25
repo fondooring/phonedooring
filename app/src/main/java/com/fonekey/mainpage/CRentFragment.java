@@ -71,7 +71,7 @@ public class CRentFragment extends Fragment {
 
         m_recyclerViewRent.setHasFixedSize(true);
         m_recyclerViewRent.setLayoutManager(new LinearLayoutManager(getActivity()));
-        m_recyclerViewRent.setAdapter(new CRecyclerAdapter(true, getActivity()));
+        m_recyclerViewRent.setAdapter(new CRecyclerAdapter(true, getActivity(), this));
 
         FloatingActionButton btnAddFerm = view.findViewById(R.id.btnAddFerm);
         btnAddFerm.setOnClickListener(new View.OnClickListener() {

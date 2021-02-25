@@ -33,6 +33,7 @@
                 android:padding="2dp">
 
                 <Button
+                    android:enabled="true"
                     android:id="@+id/btnTown"
                     android:text="Москва"
                     android:layout_width="300dp"
